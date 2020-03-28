@@ -1,5 +1,5 @@
 ---
-id: welcome
+id: Halo
 title: Welcome
 author: Adrian Yang
 author_title: Front End Engineer @ Facebook
@@ -8,4 +8,10 @@ author_image_url: https://avatars2.githubusercontent.com/u/40681152?s=460&u=e324
 tags: [facebook, hello, docusaurus]
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet
+Welcome to this blog. This blog is created with [**Docusaurus 2 alpha**](https://v2.docusaurus.io/).
+
+<!--truncate-->
+
+This is a test post.
+
+A whole bunch of other information.
