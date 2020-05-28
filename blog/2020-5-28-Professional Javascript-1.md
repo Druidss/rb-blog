@@ -1,0 +1,391 @@
+---
+id: Halo
+title: Welcome
+author: Adrian Yang
+author_title: Front End Engineer @ Facebook
+author_url: https://github.com/Druidss
+author_image_url: https://avatars2.githubusercontent.com/u/40681152?s=460&u=e324c1f3465c768888c1fcf798b5f5eb1be9d60d&v=4
+tags: [JavaScript, professional, 4-变量 5-引用类型]
+---
+
+
+## **L4 变量 作用域 和  内存问题**
+
+探讨了 JavaScript处理松散类型的变量
+
+还讨论了 原始值 和 引用值之间的差别 以及变量有关的执行环境的相应内容
+
+最后 通过介绍JavaScript的垃圾收集机制 解释了变量在退出作用域时释放其内存的问题
+
+**本章内容:**
+
+- 理解基本类型和引用类型的数值
+- 理解执行环境
+- 理解垃圾收集
+
+
+
+JS  变量松散类型的本质,决定了它只是在特定的事件用于保存特定值的一个名字而已
+
+由于不存在定义某个变量必须要保存何种类型值的规则,变量的数值及其数据类型可以在脚本的生命周期内改变 (JS变量实际上的复杂程度不止于此
+
+#### **4.1  基本类型 和 引用类型的值**
+
+**基本类型**
+
+> 简单的数据段
+
+**引用类型**
+
+> 指 那些可能多个值构成的对象
+>
+> 引用类型的值按引用进行 访问 因为JS中不允许直接访问内存的位置,就不能直接操作对象的内存空间.在操作对象的时候 ,实际是操作对象的引用而不是实际的对象
+
+###### **4.1.2 复制变量值**
+
+基本类型复制: 
+
+> 在变量对象上创建一个新值.两个变量之间相互独立
+
+引用类型的复制:
+
+> 复制 指针的副本, 两个指针同时指向存储在堆中的对象
+
+###### **4.1.3 传递参数**
+
+所有参数都是值传递 如同基本类型变量的复制 而不是按引用的方式
+
+```javascript
+function setName(obj) {
+	obj.name = "Nicholas";
+	obj = new Object();
+	obj,name = "Greg";
+}
+
+var person = new Object;
+setName(person);
+alert(person.name); // "Nicholas"
+```
+
+ 在函数内部重写obj 时, 这个变量的引用就是一个局部的对象了.这个局部对象会在函数执行后被销毁
+
+
+
+#### **4.2 执行环境和作用域 execution context**
+
+内部的环境可以通过作用域链访问到所有的外部环境,但外部环境不能访问内部环境中任何变量和函数.   
+
+这写环境之间的联系是 线性 有序的
+
+#### 4.3 垃圾收集
+
+垃圾收集机制:
+
+> 找出不再使用的变量,释放其占用的内存
+>
+> 垃圾收集器跟踪哪个变量有用 对不再使用的变量打上标记
+
+**标记清除 (mark and sweep)**
+
+当变量进入环境,则标记变量进行环境,从逻辑上,永远不能和释放进入环境的变量所占用的内存
+
+**引用计数 (reference counting)**
+
+循环引用问题:
+
+```javascript
+function problem(argument) {
+		var ObjectA = new Object();
+		var ObjectB = ner Object();
+
+		ObjectA.someOtherObject = ObjectB;
+		ObjectB.anotherObject = ObjectB;
+}		
+```
+
+他们之间的引用次数永远不会是0  大量调用后 内存不会得到回收
+
+BOM DOM 对象基于 C++ 中的COM (Component Object Model) 实现,而COM 仍采用引用计数策略,现在 DOM 和 BOM 都是JavaScript 真正的对象 
+
+#### **4.4 小结**
+
+- 基本类型数值在内存中占据固定大小的空间,因此被保留在栈内存中
+- 确定值是那种基本类型: typeof 操作符, 确定值是哪种引用类型可以使用instanceof 操作符
+
+执行环境
+
+- 执行环境有全局执行环境 和 函数执行环境之分
+- 每进入一个执行环境, 都会创建一个用于搜索变量 和 函数的作用链 
+- 变量的执行环境决定 如何释放内存
+
+垃圾收集机制
+
+- 离开作用域的值被自动标记为回收, 因此在垃圾收集期间被删除
+- "标记清除" 主流垃圾收集算法 
+- "引用算法" 当代码中出现循环引用的现象时 会导致问题
+- 解除变量的引用不仅有助于消除循环引用的现象, 而且对于垃圾收集也有好处,为了确保有效地回收内存,应该及时解除不再使用的全局对象,全局对象属性,以及 循环变量的引用
+
+
+
+
+
+
+
+## **L5 引用类型**
+
+详尽的介绍了JavaScript的所有的引用类型 如: Object Array...
+
+这一章对 ECMA-262 规范描述中每一种理论类型即做了理论上的阐释 用从浏览器实现的角度给出了介绍
+
+引用类型的值是引用类型的一个实例, 在ECMAScript 中, 引用类型是一种数据结构,也被常常成为类,但不准确,尽管ECMAScript是面向对象的语言,但是并不具有面向对象语言所支持的类和接口等基本结构.
+
+#### **5.1 Object 类型**
+
+大多数引用类型值都是Object 的实例
+
+new + Object 构造函数创建实例
+
+```javascript
+var person = new Object();
+person.name = "Nicholas";
+person.age = 29;
+```
+
+对象字面量 表示法
+
+这个语法要求的代码量少, 更有数据封装的感觉, 同时也是向函数传递大量可选参数的首选方式
+
+```javascript
+var person = {
+	name : "Nicholas",
+	age : 29
+};
+```
+
+
+
+
+
+#### **5.2 Array类型**
+
+检测数组
+
+如果网站有多个框架,那么就有多个不同的全局执行环境,从而有不同的Array的构造函数
+
+Array.isArray( ) 最终确定是否为数组 不管在哪个全局的环境中创建
+
+**5.2.1 检测数组**
+
+tostring()  返回数组的字符串表示
+
+valueof()  返回数组 但也调用数组汇总报告每一项的 tostring() 方法
+
+栈: array.pop( )  array.push( )
+
+队列:  array.push array.shift
+
+array.concat()  基于当前数组创建一个新数组
+
+**5.2.8 迭代方法**
+
+定义了五个迭方法, 每个方法接受两个参数,要在每一项上运行的**函数**和运行该函数的**作用域对象**,影响this 本身的值
+
+传入三个参数: (数组项的值(item),该项在数组中的位置(index),数组对象的本身(array))
+
+
+
+#### **5.3 Data 类型**
+
+```js
+var allFives = new Date(Data.UTC(2005,4,5,17,55,55));
+//2005.05.05 17:55:55
+
+var start = Date.now(); //调用日期和时间的毫秒数
+dosomething();
+var stop = Date.now(),
+result  = stop - start;
+```
+
+#### **5.4 RegExp 类型**
+
+pattern: 任何简单或复杂的表达式
+
+**5.4.1 RegExp实例属性**
+
+实例属性不会重置
+
+- global 表示是否设置 g 标志
+- ignoreCase  是否设置 i 标志
+- lastIndex 整数  表示开始搜索下一个匹配项的字符位置 从0 开始
+- multiline 是否设置  m 标志
+- source  正则表达式字符串表示, 按照字面量形式 而非 传入构造函数中的字符串模式返回
+
+```js
+var re = null;
+
+for (var i = 0; i < 10; i++) {
+	re = /cat/g; 
+	re.test("catastrophe"); // 仅一次返回  再次调用test() 失败
+}
+
+for ( i=0; i<10 ; i++){
+	re = new RegExp("cat",g);
+	re.test("catastrophe");  //true
+}
+```
+
+正则表达式每一次使用都要创建新的实例
+
+
+
+**5.4.2  RegExp实例方法**
+
+.exex("应用的字符串") 返回第一个匹配信息的数组
+
+.test("字符串参数") 与该参数匹配的模式下返回true
+
+
+
+
+
+#### **5.5 Function 类型**
+
+函数名仅仅是指向函数的指针, 所以没有重载,创建第二个函数的时候,实际上覆盖率第一个函数的变量
+
+**5.5.4 函数内部的特殊属性:**
+
+ **argument** 是一个类数组对象,包含传入函数中的所有函数
+
+**arguments.callee**
+
+```javascript
+function facorial (num) {
+	if (num <=1) {
+		return 1;
+	}else{
+		return num * argument.callee(num-1); // 解除函数体内和函数名的耦合状态
+	}
+}
+
+var trueFactorial = facorial; //在另一个位置保持了函数指针
+
+facorial = function () {
+	return 0;
+}
+
+alert(trueFactorial(5)); //120
+alert(facorial(5)) ; //0
+```
+
+
+
+**This**  引用的是函数据以执行的环境对象(全局作用域中为 window)
+
+```js
+window.color = "red";
+var o = { color: "blue"};
+
+function sayColor(){
+	alert(this.color);
+}
+
+sayColor(); //"red"
+o.sayColor = sayColor(); //全局的sayColor 与 o.sayColor 都是指向的用一个函数
+o.sayColor(); //"blue"
+
+// 扩充函数的作用域
+sayColor.call(this); //red
+sayColor.call(window); //red 
+sayColor.call(o);      //blue'
+
+//bind()
+var objectSayColor = sayColor.bind(o); //创建函数实例 其this值 被绑定到传给bind()函数的值
+objectSayColor(); //blue
+
+```
+
+#### **5.5.5 函数的属性和方法**
+
+length: 表示函数希望接收的参数命名个数
+
+prototype: 保存引用类型的所有实例方法 在创建 自定义引用类型以及实现继承时, prototype 属性很重要
+
+每个函数都包含两个非继承而来的方法: 
+
+都是在特定的作用域中 调用函数, 实际上等于设置函数体内this 对象的值
+
+apply( 作用域(this), 参数数组) : 
+
+call() : 必须明确每一个传入的参数
+
+``` js
+function sum(num1,num2) {
+	return num1 + num2;
+}
+function callSum(num1,num2){
+	return sum.call(this,num1,num2);
+}
+function callSum2(num1,num2) {
+	return sum.apply(this,arguments)
+}
+
+alert(callSum(10,10)); //20
+alert(callSum1(10,10)); //20
+```
+
+
+
+#### **5.6 基本包装类型**
+
+为了便于操作基本类型的值 提供了三个特殊的基本类型值: Boolean Number String. 
+
+当读取一个基本类型的值的时候,就创造一个对应的基本包装类型的对象
+
+```js
+var falseObject = new Boolean(false);
+var result - falseObject && true;
+alert(result); // true
+
+var falseValue = false;
+result = falseValue && true;
+alert(result); //false
+```
+
+
+
+####  **5.7单体内置对象**
+
+不依赖宿主环境的对象  在程序之前就已经存在了 z.B Object Array String
+
+**5.7.1 Global 对象**
+
+总计兜底对象,不属于任何其他对象的属性和方法 最终都是他的属性和方法
+
+eval()方法: 
+
+当浏览器发现代码调用eval() 时 它会将传入的参数当作实际的ECMAScript 语句来解析
+
+通过 eval() 调用的代码被认为是包含该次调用的一部分, 因此被执行的代码具有与该执行代码环境相同的作用链
+
+
+
+#### **5.8 小结**
+
+- 引用对象 与 传统面向对象程序设计中的类类似,但实现不同
+- Object 是一个基础类型 所有其他类型都从Object 继承了 基本的行为
+- Array 类型是一组值的有序列表 同时提供了转换和操作这些值的功能
+- Date 类型提供了有关日期和时间的信息 包括当前日期和时间 以及相关的基本功能
+- RegExp 类型是 支持正则表达式的一个接口, 提供基本和一些高级的正则表达式的功能
+
+函数 是 Function 类型的实例 函数也是对象 函数也拥有方法 ,可以增强行为
+
+因为有了包装类型 ,所以基本类型的值可以被当作对象来访问, 以下为他们的共同的特质
+
+- 每个包装类型都能映射到同名的基本类型
+- 在读取模式下访问基本类型的值时,就会创建一个包装类的一个对象,方便数据操作
+- 操作基本类型的值语句完毕,就销毁新的包装对象
+
+
+
+
+
