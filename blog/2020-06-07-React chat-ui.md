@@ -29,7 +29,7 @@ tags: [React, chat-ui, docusaurus]
 
 组件接收props
 
-```js
+```jsx
 function Button(props) {
 return <button>{props.label}</button>;
 }
@@ -49,7 +49,7 @@ function App() {
 }
 ```
 
-children 属性 
+**children 属性** 
 
 props 内置属性 在组件中 开始和结束标签里的任何内容
 
@@ -76,8 +76,61 @@ props 是静态的 数据不会刷新,如果想要动态更改组减的数值,�
 //style 接受一个对象形式
 ```
 
-Hooks
+#### **Hooks**
 
 用来定义可复用的逻辑
 
 推荐Hooks 都以use开头
+
+
+
+#### **Styled-components**
+
+可以根据组件的props来生成不同的样式,此外生成的CSS只在本组件生效,不会影响其他组件
+
+所有用styled-components 创建的组件,其 props 里带有 theme 属性,用来访问主题对象
+
+tagged template Literals  
+
+为模板字符串传递参数
+
+```jsx
+import React from "react";
+import styled from "styled-components";
+
+const StyledButton = styled.div `
+    width: 80px;
+    background-color: #2ed573;
+`;
+
+function Button( {onClick, label, children }) {
+return(
+ <StyledButton onClick={onClick}>
+ <button>{label}</button>
+  {children}
+ </StyledButton>
+);
+}
+
+export default Button;
+
+//自定义宽度 ${} 来访问属性
+const StyledButton = styled.div `
+    width: ${({ width } )=> width || "80px"};
+    background-color: ${({ theme }) => theme.primaryColor};
+`;
+
+function Button( {width, onClick, label, children }) {
+return(
+ <StyledButton width={width} onClick={onClick}>
+ <button>{label}</button>
+  {children}
+ </StyledButton>
+);
+}
+
+//最后在APP.js 里定义宽度
+```
+
+StoryBook
+
