@@ -1,3 +1,4 @@
+---
 id: chat-ui
 title: chat-ui
 author: Adrian Yang
@@ -5,10 +6,11 @@ author_title: Front End Engineer @ Facebook
 author_url: https://github.com/Druidss
 author_image_url: https://avatars2.githubusercontent.com/u/40681152?s=460&u=e324c1f3465c768888c1fcf798b5f5eb1be9d60d&v=4
 tags: [React, chat-ui, docusaurus]
+---
 
 ## React chat-ui
 
-**#### 组件**
+#### 组件
 
 <APP /> 应用的入口组件
 
@@ -92,6 +94,30 @@ Hook是一种特殊函数，可让你 “接入” React 功能。 例如，useS
 
 
 
+```jsx
+import { useState } from 'react';
+
+function Example() {
+  // Declare a new state variable, which we'll call "count"
+  const [count, setCount] = useState(0);
+```
+
+**调用 `useState` 有什么作用？** 
+
+它声明了一个 “state(状态)变量”。 我们的变量叫做 `count`，但我们可以称之为其他任何东西，比如 `banana`。 这是一种在函数调用之间“保留”某些值的方法 - `useState` 提供了和使用在类中 `this.state` 完全相同功能的新方法。 通常，当函数退出时变量就会“销毁”，但 React 会保留 state(状态) 变量。
+
+**我们传递给 `useState` 的参数是什么？**
+
+ `seState()` Hook 惟一参数是初始 state(状态) 。与 classes(类) 不同，这里的 state(状态) 不一定是对象。他可以是任何我们需要的内容，比如数字，字符串等。在我们的示例中，我们只需要一个数字来表示用户点击的次数，因此将 `0` 作为变量的初始状态。（如果我们想在状态中存储两个不同的值，我们将调用 `seState()`两次。）
+
+**`useState`返回的是什么？** 
+
+它返回一对值：当前 state(状态) 和更新它的函数。 这就是我们编写 `const [count, setCount] = useState()` 的原因。 这与类中的 `this.state.count` 和 `this.setState` 类似，只不过它们是成对的。
+
+
+
+
+
 #### **Styled-components**
 
 可以根据组件的props来生成不同的样式,此外生成的CSS只在本组件生效,不会影响其他组件
@@ -140,5 +166,68 @@ return(
 //最后在APP.js 里定义宽度
 ```
 
-StoryBook
+**StoryBook**
+
+独立,因为自己本身就是一个React 的开发环境
+
+
+
+
+
+## L4  侧导航
+
+###### **index.js**	
+
+rfcp 快捷键 (ES7 React/Redux/GraphQL/React-Native snippets)
+
+```jsx
+import React from 'react'
+import PropTypes from 'prop-types'
+
+function $1(props) {
+  return <div>$0</div>
+}
+
+$1.propTypes = {}
+
+export default $1
+```
+
+
+
+1. 导入 React 依赖 
+2. 创建按一个函数式的组件,并返回一个空的<div>
+3. 引入 Proptype 并且给组件设置一个空的Protypes 属性
+
+###### **style.js**
+
+```jsx
+import styled  from 'styled-components'
+
+const StyledAvatar = styled.div``;
+//头像组件最外层的容器
+
+const StatusIcon = styled.div``;
+//头像的在线状态
+
+const AvatarClip = styled.div``;
+//头像蒙版
+
+const AvatarImage = styled.img``;
+
+
+
+//习惯将最外层容器默认导出 其他的 作为命名导出
+
+export default StyledAvatar;
+export { StatusIcon,AvatarClip,AvatarImage };
+```
+
+
+
+#### 添加属性
+
+我们想让其他组件在使用头像组件时,可以自定义头像图片,在线状态,尺寸,还有在线图标的大小
+
+通过props 来进行灵活的设置
 
