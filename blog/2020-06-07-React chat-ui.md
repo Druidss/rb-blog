@@ -231,3 +231,9 @@ export { StatusIcon,AvatarClip,AvatarImage };
 
 通过props 来进行灵活的设置
 
+
+
+#### **jsconfig.json 文件介绍**
+
+
+
