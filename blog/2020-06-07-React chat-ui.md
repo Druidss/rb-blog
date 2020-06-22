@@ -166,17 +166,19 @@ return(
 //最后在APP.js 里定义宽度
 ```
 
-**StoryBook**
+#### **StoryBook**
 
 独立,因为自己本身就是一个React 的开发环境
 
-
+yarn run storybook
 
 
 
 ## L4  侧导航
 
-###### **index.js**	
+###### **index.js**
+
+
 
 rfcp 快捷键 (ES7 React/Redux/GraphQL/React-Native snippets)
 
@@ -185,12 +187,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 function $1(props) {
-  return <div>$0</div>
+  return <div>$0</div>  // 函数 内返回最外层容器组件
 }
 
-$1.propTypes = {}
+$1.propTypes = {}  // 添加了属性类型检查
 
-export default $1
+export default $1 // 导出组件
 ```
 
 
@@ -202,7 +204,7 @@ export default $1
 ###### **style.js**
 
 ```jsx
-import styled  from 'styled-components'
+import styled  from 'styled-components' //导入 styled-components 的实例
 
 const StyledAvatar = styled.div``;
 //头像组件最外层的容器
@@ -225,6 +227,27 @@ export { StatusIcon,AvatarClip,AvatarImage };
 
 
 
+###### **avatar.stories.js**
+
+用来编写组件的stories
+
+```jsx
+import Avatar from "./Avatar";
+import React from "react";
+
+export  default {
+    title:"Avatar",
+    component: Avatar,
+};  //  默认导出
+
+
+export const Default = () => {
+    return <Avatar src={face1} />   
+}; // 组件默认的story
+```
+
+
+
 #### 添加属性
 
 我们想让其他组件在使用头像组件时,可以自定义头像图片,在线状态,尺寸,还有在线图标的大小
@@ -235,5 +258,149 @@ export { StatusIcon,AvatarClip,AvatarImage };
 
 #### **jsconfig.json 文件介绍**
 
+是Vscode 下的配置文件 基于typescript中tsconig.json 文件演化而来
+
+我们可以对工程进行配置,让vscode 提供更好的代码补全和提示功能
+
+配置绝对路径导入 :	 **compilerOptions**
+
+	-  include: 	表示vscode   会把那些目录下的文件夹当成 项目的源代码
+	-  exclude: 那些文件夹不属于项源代码  //一般noedmudles 存放依赖库 一般不属于项目源代码
+	-  
 
 
+
+#### **Hygen 模板生成器配置**
+
+配置组件中三个文件模板,使用一条命令直接生成三个文件
+
+```powershell
+npm i -g hygen // 安装
+hygen init self // 初始化 生成了一个 _templates的文件夹
+hygen generator new component // 创建一个名字为 component 的模板生成器
+hygen component new Icon // Action  hygen component new --name Icon
+```
+
+**编写模板文件**
+
+```jsx
+index.js
+---
+to: src/components/<%= name %>/index.js
+---
+
+import React from 'react'
+import PropTypes from 'prop-types'
+import Styled<%= name %> from './style';
+
+function <%= name %>({ 
+    children,
+    ...rest
+ }) {
+    return (
+        <Styled<%= name %> {...rest}>
+          {children}
+        </Styled<%= name %>>
+    );
+}
+
+<%= name %>.propTypes = {
+  children: PropTypes.any
+};
+
+export default <%= name %>;
+=================================================
+    
+    
+style.js
+    ---
+to: src/components/<%= name %>/style.js
+---
+
+import styled from "styled-components";
+
+const Styled<%= name %> = styled.div``;
+
+export default Styled<%= name %>;
+===================================================
+    
+stories.js
+   ---
+to: src/components/<%= name%>/<%= h.changeCase.lcFirst(name) %>.stories.js
+---
+
+import React from "react";
+import <%= name%> from ".";
+
+export default {
+    title: "<%= name%>",
+    component: <%= name%>
+}
+
+export const Default = () => <<%= name%>> 默认 </<%= name%>>;
+
+```
+
+
+
+#### **ICON  组件**
+
+Fontawesome 图标库
+
+```powershell
+λ yarn add @fortawesome/react-fontawesome  //fontawesome 的react 组件
+λ yarn add @fortawesome/fontawesome-svg-core // 核心图标库
+λ yarn add @fortawesome/free-brands-svg-icons // 品牌图标库
+λ yarn add @fortawesome/free-regular-svg-icons // 空心图标库
+λ yarn add @fortawesome/free-solid-svg-icons // 实心图标库
+```
+
+```jsx
+const StyledIcon = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  svg,
+  svg * {
+    ${({ color }) => (color ? `fill: ${color}`: "")};
+    ${({ opacity }) => (opacity ? `	opacity: ${opacity}`: "")};
+  }
+`;
+===============================
+ sories.js
+
+import React from "react";
+import Icon from ".";
+
+import { ReactComponent as SmileIcon } from "assets/icons/smile.svg"
+// ReactComponent 来自于webpack的 svg loader  creat react app 中 自己配置了
+//将 svg看组组件导入 最终将 svg代码 渲染到 Dom　上　变成行内svg　
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCommentDots } from '@fortawesome/free-solid-svg-icons'
+export default {
+    title: "UI/Icon",
+    component: Icon
+}
+
+export const Default = () => <Icon icon={SmileIcon} />;
+
+
+export const CustomColor = () => {
+    return <Icon icon={SmileIcon} color="#cccccc" />;
+};
+
+export const CustomSize = () => {
+    return <Icon icon={SmileIcon} width={48} height={48} color="#cccccc" />;
+};
+
+export const FontAwesome = () => {
+    return <FontAwesomeIcon icon={faCommentDots} />;
+}
+
+```
+
+
+
+#### **徽章组件**
