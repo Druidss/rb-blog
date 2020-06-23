@@ -29,6 +29,10 @@ tags: [JavaScript, smallProject, docusaurus]
 }
 ```
 
+<!--truncate-->
+
+
+
 #### 分析对象
 
 - 游戏对象   //控制整个游戏的逻辑 在蛇 和 食物之后写
