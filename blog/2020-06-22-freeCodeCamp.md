@@ -15,7 +15,8 @@ tags: [JavaScript, freecodecamp, docusaurus]
 #### Create Visual Balance Using the text-align Property
 
 ```css
-text-align: justify;  causes all lines of text except the last line to meet the left and right edges of the line box.  
+text-align: justify;  
+causes all lines of text except the last line to meet the left and right edges of the line box.  
 即每行的左右两端都紧贴行的边缘。
 
 text-align: center; centers the text
