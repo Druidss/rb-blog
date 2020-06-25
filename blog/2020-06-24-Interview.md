@@ -48,6 +48,8 @@ tags: [JavaScript, Interview, HTML, CSS]
 - 触发条件?
 - 特性以及作用?
 
+<!--truncate-->
+
 如何理解语义化?
 
 ACU？
@@ -257,3 +259,19 @@ watch 与 computer 的区别?
 get post 的区别? get的请求参数可不可以放到Body里面呢?
 
 一次 HTTP 请求的过程?
+
+
+
+
+
+```js
+function addCurry () {
+	var a =7;
+     return function(b) {
+         console.log(a + b);
+     }
+}
+var add = addCurry();
+add(5);
+```
+
