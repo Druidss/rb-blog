@@ -329,7 +329,15 @@ add(5);
 
 DOM事件流 347页
 
-- 捕获 冒泡
+> 事件流是页面接受事件的顺序
+
+- 事件捕获
+- 处于目标阶段
+- 事件冒泡阶段
+
+mouseover - mouserout   当鼠标移入元素或者其子元素都会触发事件,存在重复触发的过程
+
+mouseenter - mouseleave 当鼠标移入元素本身(不包含子元素)会触发事件, 不会事件冒泡
 
 事件委托 402
 
@@ -372,28 +380,44 @@ function delegate(element, eventType, selector, fn) {
 - Cookie的构成
 - localStorage 和 sessionStorage
 
-Cookie:
+**Cookie:**
 
-1. HTTP 响应通过 Set-Cookie 来设置Cookie
+1. HTTP  响应通过 Set-Cookie 来设置Cookie
 
 2. 浏览器访问指定域名必须带上Cookie 作为 Request Header
 
-3. Cookie一般来记录信息
+3. Cookie一般来记录信息  因为HTTP 无状态 而服务端的业务需要状态
 
-Session:
+```
+Set-Cookie: "name=value;domain=.domain.com;path=/;expires=Sat, 11 Jun 2016 11:29:42 GMT;HttpOnly;secure"
+```
+
+cookie 的 HTTPOnly 加上之后无法通过js来获取cookie, 从而防止xss攻击
+
+**Session:**
 
 1. Session是服务端的内存数据
 2. Session 一般通过在Cookie 里记录 SessionID 来实现
 3. SessionID 一般是随机数
 
-LocalStorage 与 Cookie
+**LocalStorage 与 Cookie**
 
 1. Cookie请求会发送到服务器上, 而 LocalStorage 不会
 2. Cookie 大小一般在4k以下  LocalStorage 一般为5 mb 左右
 
-举例: cookie 的 HTTPOnly 加上之后无法通过js来获取cookie, 从而防止xss攻击
 
-**let const var 的区别?**
+
+**localStorage 和 sessionStorage**
+
+都是存储客户端临时信息的对象
+
+sessionStorage 声明周期是一个会话 而 localStorage 存储的数据生命周期是永久的
+
+
+
+
+
+#### **let const var 的区别?**
 
 1. var声明变量可以重复声明，而let不可以重复声明 
 
@@ -414,6 +438,10 @@ LocalStorage 与 Cookie
 
 
 **ES6 异步编程 Promise 和 async await?**
+
+Promise
+
+Promise 通过可信任的语义把回调参数作为参数传递, 将回调的任务交给一个 我们与其他工具之间的可信任机制
 
 - 内部状态
 
@@ -438,6 +466,8 @@ LocalStorage 与 Cookie
   promise1和promise2只要有一个成功就会调用success1
   
   补充： catch则是用来指定发生错误时的回调函数
+  // 优点 解决回调地狱
+  // 缺点  无法取消 Promise 错误需要通过回调函数来捕获
   ```
 
   **async / await**
@@ -459,6 +489,7 @@ LocalStorage 与 Cookie
    result === 'fuck'
   
   目的是把异步代码写成同步代码
+  // 但如果 多个异步操作没有依赖性  使用await 导致性能降低
   ```
 
   
@@ -469,13 +500,36 @@ LocalStorage 与 Cookie
 - 事件循环 什么是 eventloop
 - 宏任务 / 微任务
 
-**事件循环**
+**事件循环** eventloop
 
 1. 在代码执行的过程中会执行同步代码,然后宏任务(script setTimeout),进入宏任务队列,微任务(Promise.then() , Promise) 进入微任务队列
 2. 当宏任务执行完事之后出队, 检查微任务列表, 继续执行到微任务知道执行完毕
 3. 执行浏览器的UI 渲染过程
 4. 检查是否有 Web Worker 任务 有则执行
 5. 继续下一轮的宏任务和微任务
+
+
+
+解构赋值
+
+```js
+数组解析：
+let [a, b, c] = [1, 2, 3]   //a=1, b=2, c=3
+let [d, [e], f] = [1, [2], 3]    //嵌套数组解构 d=1, e=2, f=3
+let [g, ...h] = [1, 2, 3]   //数组拆分 g=1, h=[2, 3]
+let [i,,j] = [1, 2, 3]   //不连续解构 i=1, j=3
+let [k,l] = [1, 2, 3]   //不完全解构 k=1, l=2
+
+对象解析：
+let {a, b} = {a: 'aaaa', b: 'bbbb'}      //a='aaaa' b='bbbb'
+let obj = {d: 'aaaa', e: {f: 'bbbb'}}
+let {d, e:{f}} = obj    //嵌套解构 d='aaaa' f='bbbb'
+let g;
+(g = {g: 'aaaa'})   //以声明变量解构 g='aaaa'
+let [h, i, j, k] = 'nice'    //字符串解构 h='n' i='i' j='c' k='e'
+```
+
+
 
 ## **二星问题**
 
@@ -556,16 +610,16 @@ reduce / reduceRight(fn(prev, cur)， defaultPrev):
 
 ``` js
 fn()
-    this => window/global
-obj.fn()
+    this => window/global  // 默认绑定
+obj.fn()  // 隐式绑定 在对象直接调用函数的时候
     this => obj
-fn.call(xx)
+fn.call(xx)  //显示绑定
     this => xx
 fn.apply(xx)
     this => xx
 fn.bind(xx)
     this => xx
-new Fn()
+new Fn()  
     this => 新的对象
 fn = ()=> {}
     this => 外面的 this
@@ -575,19 +629,28 @@ fn = ()=> {}
 
 **箭头函数?**
 
-
+- 没有this  箭头函数的外层函数就是  箭头函数的this绑定
+- 没有自己的 arguments 对象 
+- 不通过new 关键字调用  没有new target 和 原型
 
 **实现继承的几种方式?**
 
 162页
 
-Js 取消事件?
+1. 原型链继承,将父类的实例作为子类的原型   子类的实例同时也是父类的实例,父类新增的原型方法 / 属性, 子类都能够访问.  缺点是原型对象的所有属性被所有实例共享,无法实现多继承, 无法向父类构造函数传参
+2. 构造继承 使用父类的构造函数来增强子类实例, 可以实现多继承,但只能继承父类的属性和方法,不能继承原型属性和方法.无法实现函数复用.每一个子类都有函数实例的副本,影响性能
+3. 寄生组合继承  通过寄生的方式, 砍掉父类的实例属性,这样,调用两次父类的构造函数的时候,就不会初始化两次实例方法和属性
+
+
+
+#### **Js 取消事件?**
 
 1. onclick <-> btn.onclik = null; 
 2. addEventListener( ) <-> remove~
 
 ```js
-//removeEventListener()的都三个参数必须与addEventListener()一致
+//removeEventListener()的都三个参数必须与addEventListener()一致 
+// 该参数为 这个布尔值表示   描述事件是冒泡还是捕获 
 // 通过 addEventListener() 方法添加的匿名函数将无法移除
 
 btn.aaddEventListener('click',function(){alert(1);},false);
@@ -608,6 +671,14 @@ btn.removeEventListener('click',fn,false);//有效
 ## **一星问题**
 
 **new 内部做了什么?**
+
+用 new 操作符  调用构造函数经历以下四个步骤
+
+1. 创建 一个新的对象
+2. 将构造函数的作用域 赋值给 新的对象 this指向这个对象
+3. 执行构造函数中的代码  为这个新对象添加属性
+4. 返回新的对象
+5. 将构造函数的 prototype  属性关联到 实例的 __proto__
 
 #### **防抖/节流?**
 
@@ -860,6 +931,14 @@ GET 最大长度是因为 web 服务器限制 URL 的长度
 
 #### **怎么跨域, JSONP CORS postMessage 是什么?** 
 
+
+
+**CORS**
+
+Cross-Origin Resource Sharing 跨源资源共享 使用自定义的HTTP 头部
+
+HTTP 头部中额外添加 Origin
+
 ```bash
 因为浏览器出于安全考虑，有同源策略。也就是说，如果协议、域名或者端口有一个不同就是跨域，Ajax 请求会失败。
 为来防止CSRF攻击
@@ -872,7 +951,8 @@ GET 最大长度是因为 web 服务器限制 URL 的长度
         	console.log(data)
     	}
     </script>
-    JSONP 使用简单且兼容性不错，但是只限于 get 请求。
+    JSONP 使用简单且兼容性不错，但是只限于 get 请求,因为Sctipt 标签只能使用get请求
+    JSONP 需要配合后端返回指定格式的数据
 2.CORS
     CORS 需要浏览器和后端同时支持，需要设置 Access-Control-Allow-Origin:http://foo.example
     IE 8 和 9 需要通过 XDomainRequest 来实现。
@@ -897,9 +977,47 @@ JSONP和AJAX相比的优缺点？
 
 ```js
  var request = new XMLHttpRequest()
- request.open('GET', '/a/b/c?name=ff', true)
+ request.open('GET', '/a/b/c?name=ff', true) // 第三个参数表示异步请求
  request.onload = ()=> console.log(request.responseText)
  request.send()
+
+// 实现一个 ajax 
+var xhr = new XMLHttpRequest()
+// 必须在调用 open()之前指定 onreadystatechange 事件处理程序才能确保跨浏览器兼容性
+xhr.onreadystatechange = function () {
+  if (xhr.readyState === 4) {
+    if (xhr.status >= 200 && xhr.status < 300 || xhr.status ==== 304) {
+      console.log(xhr.responseText)
+    } else {
+      console.log('Error:' + xhr.status)
+    }
+  }
+}
+// 第三个参数表示异步发送请求
+xhr.open('get', '/api/getSth',  true)
+// 参数为作为请求主体发送的数据
+xhr.send(null)
+
+
+// 将原生的ajax 封装为 promise
+const ajax = (url, method, async, data) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = () => {
+      // 已经接收到全部响应数据，而且已经可以在客户端使用了
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          resolve(JSON.parse(xhr.responseText))
+        } else if (xhr.status > 400) {
+          reject('发生错误')
+        }
+      }
+    }
+    xhr.open(url, method, async)
+    xhr.send(data || null)
+  })
+}
+
 ```
 
 
