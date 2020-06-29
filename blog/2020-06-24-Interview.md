@@ -214,9 +214,9 @@ mixin 类似于对象,对象里面写好CSS 属性,那里用到了就引用这�
 
 - 基本类型
 
-  四基: String number boolean symbol -> heap
+  四基: String number boolean symbol -> 栈
 
-  两空: undefined null
+  两空: undefined null  -> 堆
 
   一对象: Object (包括 数组 函数 日期 对象之父)
 
@@ -232,6 +232,16 @@ mixin 类似于对象,对象里面写好CSS 属性,那里用到了就引用这�
 - instanceof 及 原理
 - Object.toString().call() 以及原理 [[class]]
 
+**typeof 可以判断的类型** 
+
+1. 值类型Num String null  undefined Symbol Booleam
+2. 函数类型
+3. 引用类型  到那时不能细分引用类型
+
+**怎么判断 一个变量是不是数组?**
+
+instanceof 顺着原型链向上寻找
+
 #### **原型和原型链?**
 
 - 给你一个构造函数 描述 构造函数 实例 以及原型之间的关系
@@ -245,18 +255,82 @@ mixin 类似于对象,对象里面写好CSS 属性,那里用到了就引用这�
 4.a.proto === Array.prototype
 5.push 就是沿着 a.proto 找到的，也就是 Array.prototype.push，这个寻找的过程可以看做原型链
 6.Array.prototype 还有很多方法，如 join、pop、slice、splice
-7.Array.prototype 就是 a 的原型（proto）。
+7.Array.prototype 就是 a 的原型（proto）
+a.__proto === Array.prototype
+```
+
+#### **对于class 的理解? 新增的特性?**以及优缺点?
+
+class 只是一个ES6 的语言规范, 由ECMA 委员会发布,但 ECMA 只规定语法规则, 并不去规定如何实现
+
+- extend
+- super
+- 扩展或重写方法
+
+class 的原型本质
+
+class 中的继承只是一个形式   还是通过原型实现的
+
+```js
+typeof  Student // "function`"
+Student.prototype.__proto__ === People.prototype
 ```
 
 
 
-#### **闭包以及优缺点?**
+#### **Jquery 简易实现**
+
+```js
+class jQuery {
+	constructor (selector){
+		const result = document.querySelectorAll(selector);
+		const length = result.length;
+		for (let i = 0; i < length; i++) {
+			this.[i] = result[i];
+			this.selector = selector;
+		}
+		this.length = length;
+	}
+	get(index) {
+		return this[index];
+	}
+
+	each(fn) {
+		for (let i = 0; i< this.length; i++){
+			const elem = this[i];
+		}
+	}
+
+	on(type,fn){
+		return this.each(elem => {
+			elem.addEventListener(type,fn,false)
+		})
+	}
+
+}
+```
+
+
+
+**实现继承的几种方式?**
+
+162页
+
+1. 原型链继承,将父类的实例作为子类的原型   子类的实例同时也是父类的实例,父类新增的原型方法 / 属性, 子类都能够访问.  缺点是原型对象的所有属性被所有实例共享,无法实现多继承, 无法向父类构造函数传参
+2. 构造继承 使用父类的构造函数来增强子类实例, 可以实现多继承,但只能继承父类的属性和方法,不能继承原型属性和方法.无法实现函数复用.每一个子类都有函数实例的副本,影响性能
+3. 寄生组合继承  通过寄生的方式, 砍掉父类的实例属性,这样,调用两次父类的构造函数的时候,就不会初始化两次实例方法和属性
+
+
+
+
+
+#### **闭包 及优缺点**
 
 定义: 
 
 > 函数A 里面包含了 函数B，而 函数B 里面使用了 函数A 的变量，那么 函数B 被称为闭包。 又或者：闭包就是能够读取其他函数内部变量的函数
 
-用途: 设计私有变量   内部函数访问外部作用域变量
+用途: 设计私有变量 (隐藏)  内部函数访问外部作用域变量
 
 优点: 可以防止变量被全局变量污染
 
@@ -298,8 +372,9 @@ var fun = f1(1);
 setTimeout(fun,1000);//一秒之后打印出1
 
 
-
+n
 function addCurry () {
+    var a = 7
      return function(b) {
          console.log(a + b);
      }
@@ -309,11 +384,62 @@ add(5);
 // 12 
 // 典型的闭包题,当addCurry的函数返回值 赋值给 add时, a = 7这个值被捕获了
 // 后面无论是b传什么数值都是跟7相加 
+
+
+// 所有的自由变量的查找, 是在函数定义的地方,向上级作用域查找
+// 函数作为参数被传递
+function print(fn) {
+    const a = 200
+    fn()
+}
+
+const a = 100
+function {
+	console.log(a);
+}
+print(fn) //200 
+
+
+//函数作为返回值
+function create(){
+    const a =100;
+    return function () {
+        console.log(a);
+    }
+}
+const fn = create()
+const a = 200 
+fn(); //100
+```
+
+闭包在实际开发中的场景,举例说明?
+
+
+
+#### **this 指向? 在不同的场景下如何取值?**
+
+this  取什么值 不是在函数定义的时候确定,而是在函数执行的时候确定的.
+
+```js
+fn()
+    this => window/global  // 默认绑定
+obj.fn()  // 隐式绑定 在对象直接调用函数的时候
+    this => obj
+fn.call(xx)  //显示绑定
+    this => xx
+fn.apply(xx)
+    this => xx
+const fn2 = fn.bind(xx)   但bind 要返回一个新的函数才能执行
+fn2() this => xx
+new Fn()  
+    this => 新的对象  
+fn = ()=> {}
+    this => 外面的 this
 ```
 
 
 
-**call apply bind?**
+#### **call apply bind?**
 
 1. call()和apply()的第一个参数相同，就是指定的对象。这个对象就是该函数的执行上下文。 
 2. call()和apply()的区别就在于，两者之间的参数。 
@@ -321,6 +447,25 @@ add(5);
 4. apply() 只有两个参数，第一个是对象，第二个是数组，这个数组就是该函数的参数。 
 5. bind() 方法和前两者不同在于：bind()方法会返回执行上下文被改变的函数而不会立即执行，而前两者是直接执行该函数。其他的参数和call()相同。 
 6. 总结：call和apply方法都是在调用之后立即执行的。而bind调用之后是返回原函数，需要再调用一次才行。
+
+**手写 bind 函数**
+
+```js
+Function.prototype.myBind = function () {
+	// 将参数拆解为数组
+	cosnt args = Array.prototype.slice.call(arguments);
+
+	//获取this
+	const myThis = args.shift();
+	// 获取调用bind 的函数
+	const self = this ；
+
+	// 返回一个函数
+	return function (){
+		return self.apply(t,args)
+	}
+}
+```
 
 
 
@@ -433,11 +578,48 @@ sessionStorage 声明周期是一个会话 而 localStorage 存储的数据生�
 
 7. const和let一样不会与window相映射、支持块级作用域、在声明的上面访问变量会报错
 
+```js
+for(let i= 0; i < 3; i++){
+    setTimeout(() => {
+    console.log(i);
+	});
+} // 012
+var 是全局作用域  存在变量提升 setTimeout 等到代码块执行完毕再执行,所以每次循环的全局变量的i都是一样的数值
+let 是块级作用域 每次循环产生一个代码块,每个代码块中的i都是新的
+
+// 题目: 创建10<a>, 依次点击弹出相应的序号
+//不要求立刻执行代码的情况 
+let a;
+for (let i = 0; i < 10l i++){
+    a = document.createElement('a');
+    a.innerHTML = i +'<br>'
+    a.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert(i);
+    })
+}
+
+```
 
 
 
 
-**ES6 异步编程 Promise 和 async await?**
+
+#### **ES6 异步编程 Promise 和 async await?**
+
+**单线程和异步**
+
+JS 和 DOM 渲染共用同一个线程,因为js 可以修改DOM 结构
+
+虽然浏览器和Node.js 已经支持JS 启动进程. Web Work 但是JS 一次只能做一件事的单线程的本质没变
+
+异步的原因来自于 JS  是一门单线程的语言, 所以遇到网络请求的时候 不能卡住不动
+
+**同步和异步的区别是什么?**
+
+异步不会阻塞代码执行
+
+同步会阻塞代码执行
 
 Promise
 
@@ -466,7 +648,7 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
   promise1和promise2只要有一个成功就会调用success1
   
   补充： catch则是用来指定发生错误时的回调函数
-  // 优点 解决回调地狱
+  // 优点  通过串行的方式解决回调地狱 callback hell
   // 缺点  无法取消 Promise 错误需要通过回调函数来捕获
   ```
 
@@ -492,11 +674,19 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
   // 但如果 多个异步操作没有依赖性  使用await 导致性能降低
   ```
 
-  
+
+**前端使用异步的场景有哪些?**
+
+-  网络请求  如 ajax 图片加载
+- 定时任务 如setTimeout
+
+
+
+
 
 #### **Javascript 运行机制**
 
-- 单线程 解释性语言
+- 单线程 解释性语言 // 一次只能做一件事
 - 事件循环 什么是 eventloop
 - 宏任务 / 微任务
 
@@ -537,7 +727,33 @@ let [h, i, j, k] = 'nice'    //字符串解构 h='n' i='i' j='c' k='e'
 
 - 相等 == 与 全等 === 的区别
 - 强制转换和隐式转换
-- 包装类型
+- 包装类 
+
+字符串拼接
+
+```js
+const a = 100 + 10 //110
+100 + parseInt('10')  //110
+
+const b = 100 + '10' //10010
+const c = true + '10' //true10
+```
+
+== 与 ===
+
+```js
+100 = '100' //ture
+0 == '' //true
+0 == false //true
+false == '' //true
+null == undefined // true
+只有判断一个对象是否为null 的时候才用  ==
+    
+```
+
+
+
+
 
 #### **浅拷贝，深拷贝？ 如何实现深拷贝？**
 
@@ -606,24 +822,7 @@ reduce / reduceRight(fn(prev, cur)， defaultPrev):
 
 相比使用setInterval 实现的动画效果,requestAnimationFrame 的优势是?
 
-#### **this 指向?**
 
-``` js
-fn()
-    this => window/global  // 默认绑定
-obj.fn()  // 隐式绑定 在对象直接调用函数的时候
-    this => obj
-fn.call(xx)  //显示绑定
-    this => xx
-fn.apply(xx)
-    this => xx
-fn.bind(xx)
-    this => xx
-new Fn()  
-    this => 新的对象
-fn = ()=> {}
-    this => 外面的 this
-```
 
 
 
@@ -632,14 +831,6 @@ fn = ()=> {}
 - 没有this  箭头函数的外层函数就是  箭头函数的this绑定
 - 没有自己的 arguments 对象 
 - 不通过new 关键字调用  没有new target 和 原型
-
-**实现继承的几种方式?**
-
-162页
-
-1. 原型链继承,将父类的实例作为子类的原型   子类的实例同时也是父类的实例,父类新增的原型方法 / 属性, 子类都能够访问.  缺点是原型对象的所有属性被所有实例共享,无法实现多继承, 无法向父类构造函数传参
-2. 构造继承 使用父类的构造函数来增强子类实例, 可以实现多继承,但只能继承父类的属性和方法,不能继承原型属性和方法.无法实现函数复用.每一个子类都有函数实例的副本,影响性能
-3. 寄生组合继承  通过寄生的方式, 砍掉父类的实例属性,这样,调用两次父类的构造函数的时候,就不会初始化两次实例方法和属性
 
 
 
@@ -796,7 +987,7 @@ function trim(string){
 3. 当这个引用次数变成0时，则说明没有办法再访问这个值了，因而就可以将其所占的内存空间给收回来。
 4. 这样，垃圾收集器下次再运行时，它就会释放那些引用次数为0的值所占的内存。
 
-**对于class 的理解? 新增的特性?**
+
 
 **图片的预加载  和 懒加载?**
 
@@ -1032,7 +1223,7 @@ func();
 
 
 
-
+dljkkklfjuiehdi
 
 
 
