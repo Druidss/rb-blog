@@ -55,9 +55,72 @@ position: absolute / fixed
 
 **HTML 5  新增了那些标签？**
 
+**浏览器的运行机制**
+
+1. 构建DOM树( parse ): 仅仅是解析了DOM Node
+2. 构建渲染树( construct ):  解析CSS   render Tree 中不包含隐藏节点(display: none)和head
+3. 布局渲染树(reflow / layout):  从根节点递归调用, 计算逆元素大小和位置 给出每个节点在屏幕上的精确坐标
+4. 绘制渲染树 (paint / repaint): 遍历渲染树 使用UI层来绘制 每一个节点 
+
+页面文档完全加载并解析完毕之后会触发 DOMContentLoaded 事件
+
+#### **重排 repaint 和重绘 redraw (回流)?**
+
+**重绘 repaint redraw**
+
+`重绘`是 一个元素**外观的改变**所触发的浏览器行为
+
+触发条件: 改变元素的外观属性: color background-color
+
+注意: Table 及其内部的元素需多次激素三才能确定好在其渲染树节点的属性值,比同等的元素要花费更多时间,所以避免使用Table 布局页面
+
+**重排 (重构 回流 reflow):**
+
+当渲染树的一部分 因为元素的规模尺寸,布局,隐藏等改变而需要重新构建,这就成为回流(reflow). 每个页面至少需要一次回流,就是在页面加载的时候.
+
+触发重排的条件:
+
+1. 页面渲染的初始化 无法避免
+2. 添加和删除DOM 元素
+3. 元素的位置改变 or 使用动画
+4. 元素的尺寸改变  -- 大小 外边距 边框 
+5. 浏览器窗口尺寸的变化(resize   事件)
+6. 填充内容的改变  文本 或 图片大小 
+7. 读取某些元素的属性  offsetLeft/Top/Height/Width
+
+**重绘和重排的关系**
+
+在回流的时候,浏览器会使得渲染树中受到影响的部分 失效, 并重新构造这部分渲染树,完成回流后,浏览器会重新绘制受影响的部分到屏幕中.该过程为重绘
+
+ **所以,重排必定引起重绘, 重绘不一定会引发重排**
 
 
 
+**优化**
+
+浏览器自己的优化
+
+浏览器会维护一个队列,把 所有引起回流 重绘的操作都放到一个队列中, 等队列中的操作到了一定数量 or 到了一定的时间间隔,那么浏览器就会flush 队列, 进行一个批处理,这样将多次回流 和 重绘 编程一次
+
+自己进行的优化
+
+1.  直接改变元素的 className
+2. display:none 然后 进行页面布局等操作, 设置完成后将元素设置为display: block 这样的话 只引起两次重拍 和 重绘
+3. 使用 cloneNode 和 replaceChild 引发一个重排和重绘
+4. 将多次需要重排的元素 position: 设置为absolute 或者 flex 脱离文档流 不影响其他元素
+5. 如果需要创建多个DOM 节点 使用DocumentFragment  创建完成后一次性加入document.
+
+阻碍DOM 解析资源
+
+1. 内联css
+
+2. 内联js
+
+3. 普通外联js
+
+4. 外联defer js 
+
+5. js之前的外联css
 
 ## 两星题目
 
@@ -77,7 +140,7 @@ title 是全局属性
 
 ##  一星题目
 
-Script 标签的 defer 和 async?
+#### **Script 标签的 defer 和 async?**
 
 
 
@@ -154,7 +217,15 @@ width=内容区宽度+padding宽度+margin宽度 (包含内边距和边框)
 
 
 
-**重排和重绘?**
+#### **transition和animation的区别？**
+
+Transition: 与事件相绑定  类似flash 补间动画  设置一个开始关键帧 和 一个结束关键帧
+
+Animation： 是动画属性 可以定义多个关键帧 不需要事件的触发
+
+ 
+
+
 
 ## 二星题目
 
@@ -259,9 +330,13 @@ instanceof 顺着原型链向上寻找
 a.__proto === Array.prototype
 ```
 
+
+
 #### **对于class 的理解? 新增的特性?**以及优缺点?
 
 class 只是一个ES6 的语言规范, 由ECMA 委员会发布,但 ECMA 只规定语法规则, 并不去规定如何实现
+
+就是构造函数的另一种写法 就是 一种语法糖
 
 - extend
 - super
@@ -269,7 +344,9 @@ class 只是一个ES6 的语言规范, 由ECMA 委员会发布,但 ECMA 只规�
 
 class 的原型本质
 
-class 中的继承只是一个形式   还是通过原型实现的
+class 中的继承( extends )只是一个形式   还是通过原型实现的 
+
+构造函数中 写 super()
 
 ```js
 typeof  Student // "function`"
@@ -631,13 +708,15 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
 
   ```js
   1.背代码 Promise 用法
-   function fn(){
+   function axios(){
        return new Promise((resolve, reject)=>{
            成功时调用 resolve(数据)
            失败时调用 reject(错误)
        })
    }
-   fn().then(success, fail).then(success2, fail2)
+  
+  //axios() 为Promise的实例  由then 方法 then里面的第一个参数就是 resolve 函数
+   axios().then(success, fail).then(success2, fail2)
   
   2.背代码 Promise.all 用法
    Promise.all([promise1, promise2]).then(success1, fail1)
@@ -648,12 +727,16 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
   promise1和promise2只要有一个成功就会调用success1
   
   补充： catch则是用来指定发生错误时的回调函数
-  // 优点  通过串行的方式解决回调地狱 callback hell
-  // 缺点  无法取消 Promise 错误需要通过回调函数来捕获
+  // 优点  通过串行的方式解决回调地狱 callback hell 形成一个链式的结果
+// 缺点  无法取消 Promise 错误需要通过回调函数来捕获
   ```
 
   **async / await**
-
+  
+  本质是 Generator 函数 + yield  的语法糖
+  
+  Generator 是ES6 提供的一种异步编程的解决方案.
+  
   ``` js
    function returnPromise(){
       return new Promise( function(resolve, reject){
@@ -667,18 +750,30 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
       result === 'fuck'
    })
   
-   var result = await returnPromise()
-   result === 'fuck'
-  
-  目的是把异步代码写成同步代码
-  // 但如果 多个异步操作没有依赖性  使用await 导致性能降低
   ```
 
+ var result = await returnPromise()
+   // result === 'fuck'
+
+
+   例子二
+   document.gerElementById("btn").onclik= async ()=>{
+      let res = await axios();
+      console.log('结果',res);
+   }
+
+  // async await 最简单那的使用就是 省略掉.then 直接拿到返回的结果
+  //目的是把异步代码写成同步代码(看起来像)
+  // 但如果 多个异步操作没有依赖性  使用await 导致性能降低
+  ```
+  
 
 **前端使用异步的场景有哪些?**
 
 -  网络请求  如 ajax 图片加载
 - 定时任务 如setTimeout
+- 事件处理
+- nodejs 读取文件
 
 
 
@@ -700,9 +795,9 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
 
 
 
-解构赋值
+#### **解构赋值**
 
-```js
+​```js
 数组解析：
 let [a, b, c] = [1, 2, 3]   //a=1, b=2, c=3
 let [d, [e], f] = [1, [2], 3]    //嵌套数组解构 d=1, e=2, f=3
@@ -717,7 +812,7 @@ let {d, e:{f}} = obj    //嵌套解构 d='aaaa' f='bbbb'
 let g;
 (g = {g: 'aaaa'})   //以声明变量解构 g='aaaa'
 let [h, i, j, k] = 'nice'    //字符串解构 h='n' i='i' j='c' k='e'
-```
+  ```
 
 
 
@@ -1013,7 +1108,9 @@ function domToString (node) {
 }  
 ```
 
+ES6  装饰器
 
+装饰器
 
 # **框架 Vue**
 
@@ -1061,7 +1158,11 @@ reducer action store
 
 # **TypeScript**
 
-TypeScript 比起 JavaScript 有什么优点?
+#### **TypeScript 比起 JavaScript 有什么优点?**
+
+具有更加严格的类型要求
+
+
 
 never 类型是什么?
 
@@ -1211,7 +1312,13 @@ const ajax = (url, method, async, data) => {
 
 ```
 
+ajax 的 readyState 状态都代表什么？
 
+- 0：未初始化，但是已经创建了XHR实例
+- 1：调用了open()函数
+- 2：已经调用了send()函数，但还未收到服务器回应
+- 3：正在接受服务器返回的数据
+- 4：完成响应
 
 ```js
 var func = function func(){
@@ -1223,7 +1330,7 @@ func();
 
 
 
-dljkkklfjuiehdi
+
 
 
 
