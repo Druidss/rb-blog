@@ -20,6 +20,27 @@ tags: [JavaScript, Interview, HTML, CSS]
 
 - 标准模式 兼容模式?
 
+**作用:**
+
+告知浏览器应该用什么文档标准解析当前文档
+
+DOCTYPE 不存在或者格式不正确会导致文档以兼容模式展现
+
+标准模式:  排版 和 JS运作模式 都是以该浏览器支持的最高标准运行
+
+兼容模式:  页面以宽松的方式向后兼容显示  
+
+区别:
+
+- width 宽度: 兼容模式下为元素的实际宽度(margin + border + padding)  严格模式下 width 为内容宽度 
+- 兼容模式下 span 等行内元素可以设置宽高
+- margi: 0 auto 居中方式失效 要采用 text-align
+
+HTML5为什么只需要写`<!DOCTYPE HTML>`?
+
+1. 因为HTML5不是SGML的子集，所以不需要DTD引用，但是需要DOCTYPE来规范行为；
+2. 而HTML4.01是基于SGML，所以需要DTD引用，来告诉浏览器文档所使用的文档类型
+
 #### **行内元素,块级元素. 非替换元素/替换元素?**
 
 #### **BFC?**
@@ -49,11 +70,15 @@ position: absolute / fixed
 
    
 
-**ACU？**
-
-**服务端渲染**
+如何区分HTML5 与HTML?
 
 **HTML 5  新增了那些标签？**
+
+HTML 与 XHTML 的区别?
+
+
+
+如何处理HTML 5 新签标签的浏览器兼容问题?  
 
 **浏览器的运行机制**
 
