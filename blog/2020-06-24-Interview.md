@@ -22,7 +22,7 @@ tags: [JavaScript, Interview, HTML, CSS]
 
 **作用:**
 
-告知浏览器应该用什么文档标准解析当前文档
+**告知浏览器应该用什么文档标准解析当前文档**
 
 DOCTYPE 不存在或者格式不正确会导致文档以兼容模式展现
 
@@ -41,24 +41,20 @@ HTML5为什么只需要写`<!DOCTYPE HTML>`?
 1. 因为HTML5不是SGML的子集，所以不需要DTD引用，但是需要DOCTYPE来规范行为；
 2. 而HTML4.01是基于SGML，所以需要DTD引用，来告诉浏览器文档所使用的文档类型
 
+// SGML 标准通用标记语言  (Standard Generalized)
+
+// DTD 类型定义 DocumentTypeDefination
+
+
+
+
+
 #### **行内元素,块级元素. 非替换元素/替换元素?**
 
-#### **BFC?**
-
-- BFC 是什么? 
-
-BFC 为格式化上下文,产生一个独立的隔绝容器,容器的元素不会被外面的元素所影响
-
-- 触发条件?
-
-```css
-dispaly:inline-block
-position: absolute / fixed
-```
 
 
 
-- 特性以及作用?
+
 
 
 
@@ -68,17 +64,52 @@ position: absolute / fixed
 
 2. 易于阅读 方便开发人员快速了解页面结构,更具有可读性,利于开发与维护
 
+3.  有利于搜索引擎 SEO
+
+4. 无网络的情况下 不会导致排版混乱
+
    
 
-如何区分HTML5 与HTML?
+**如何区分HTML5 与HTML?**
 
-**HTML 5  新增了那些标签？**
+1. 文件的声明类型不同
 
-HTML 与 XHTML 的区别?
+2. HTML 没有语义化的结构标签
+
+3. 音视频的支持
+
+4. HTML 5 拥有canvas 画图接口 可以通过js 绘制画像
+
+**HTML 5  新增了那些标签 和 API？**
+
+27个元素
+
+1. section 用于区域章节的描述
+2. nav
+3. article
+4. video  audio  embed
+5. header footer 
+
+**API**
+
+1. History
+2. command
+3. Media
+
+放弃了 HTML 4 中的 frame frameSet big center
+
+**HTML 与 XHTML 的区别?**
+
+XHTML 使用xml 的语法来 规范的HTMLI
+
+- XHTML 元素必须正确嵌套
+- XHTML 元素必须被关闭
+- 标签名必须使用小写字母
+- 必须拥有根元素
 
 
 
-如何处理HTML 5 新签标签的浏览器兼容问题?  
+#### **如何处理HTML 5 新签标签的浏览器兼容问题?**  
 
 **浏览器的运行机制**
 
@@ -138,20 +169,24 @@ HTML 与 XHTML 的区别?
 阻碍DOM 解析资源
 
 1. 内联css
-
 2. 内联js
-
 3. 普通外联js
-
 4. 外联defer js 
-
 5. js之前的外联css
+
+
+
+
+
+
 
 ## 两星题目
 
 **img 的 title 和 alt 属性?**
 
-title 是全局属性
+title 是全局属性   鼠标滑倒元素上的时候进行展示
+
+alt   用于照片无法加载的时候显示
 
 **meta标签? 是做什么用的?**
 
@@ -163,6 +198,14 @@ title 是全局属性
 
 
 
+####  **Src 与 href**
+
+src 为引入文件 相对路径  用于 img script iframe  || 当浏览器解析到该元素的时候 会暂停其他资源的下载和处理
+
+href 是链接跳转 url  link  /  a  -> 会进行并行下载,不会停止对当前文档的处理
+
+
+
 ##  一星题目
 
 #### **Script 标签的 defer 和 async?**
@@ -171,7 +214,17 @@ title 是全局属性
 
 **Noscript 标签的作用：**
 
-用来定义再脚本未被执行的时候的替代内容。
+用来定义再脚本未被执行的时候的替代内容
+
+
+
+#### **iframe 有那些缺点?**
+
+1. 阻塞 页面的 onload 事件
+2. 不利于SEO
+3. 代码复杂 产生HTTP 请求 不利于管理  基本被Ajax 取代
+
+
 
 #### **正则表达式**
 
@@ -189,19 +242,34 @@ var res = "75team2017".match(/\d+\w*/g)
 
 +号 和 * 都是贪婪匹配  \d+ 匹配 75     \w 匹配前面一个表达式 team2017  /g ...
 
+
+
+#### **对于 SVG 的理解?**
+
+可缩放矢量模型 用于描述矢量图形的一种图形格式
+
+1. 可任意缩放 不失真
+2. 下载速度 大于 jpg png
+
 # **CSS**
 
 ## 三星题目
 
-**清除浮动的方法?**
-
-**position 属性 ?他们的用法和区别？?**
+**position 属性 ?他们的用法和区别?**
 
 绝对定位 相对定位 固定定位 sticky 粘性定位
+
+
+
+
 
 **CSS 隐藏元素的方式?**
 
 display:none 与 visibility:hidden 的区别 结合重排重绘
+
+display：none 不显示对应的元素，在文档布局中不再分配空间（重排+重绘)
+
+visibility：hidden 隐藏对应元素，在文档布局中仍保留原来的空间（重绘）
 
 ```css
 1.transform:scale(0,0)  //占空间
@@ -210,6 +278,8 @@ display:none 与 visibility:hidden 的区别 结合重排重绘
 4.position绝对定位，z-index:-1000;  //不占空间无法点击
 5.display:none  //不占空间，无法点击
 ```
+
+
 
 
 
@@ -222,41 +292,124 @@ display:none 与 visibility:hidden 的区别 结合重排重绘
 display: flex  //设置Flex模式
 flex-direction: column  //决定元素是横排还是竖着排
 flex-wrap: wrap     //决定元素换行格式
-flex-shrink:0   //方式缩放后变瘦，1是默认值，缩放后一起变
+flex-shrink:0   //方式缩放后变瘦，1是默认值 0 不缩小
 flex-grow:1     //占1份，一般写在导航栏，左边logo为0，右边头像为0，中间导航为1
 
-justify-content: space-between  //同一排下对齐方式，空格如何隔开各个元素
-align-items: center     //同一排下元素如何对齐
+justify-content: space-between  //主轴上对齐
+align-items: center     // 交叉轴进行对齐
 align-content: space-between    //多行对齐方式
 ```
 
 
 
-**双栏布局,三栏布局?**
+
+
+**如何居中DIV   如何居中一个浮动元素?**
+
+非浮动元素居中:  margin: 0 auto  并设置宽度 
+
+浮动元素居中: 子绝父相  
+
+```css
+.father{
+	position: relative
+    float:left;
+    left:50%;
+}
+.son {
+    position:absolute;
+    float:left;
+    right: 50%;
+}
+// flex 布局
+.parent {
+    display:flex;
+    justify-content:center;
+}
+.chlid{
+    float: left;
+    width: 200px;//有无宽度不影响居中
+}
+```
+
+
+
+#### **双栏布局,三栏布局?**
 
 每种布局都要掌握多种方法
 
+
+
+
+
+#### **实现页面通信有哪些方法?** 
+
+- 获取句柄 定向通讯   window.open(url, name)   -> postMessage 完成通信
+- 共享内存 结合 轮询 和 事件通知  Loacalstorage  -> storage事件
+
+//websocket
+
+
+
 **CSS 盒子模型 哪两种？**
+
+- 标准 W3C 盒子 margin - border - padding - content
+- IE 盒子  content 包括 border 和 padding
 
 ```css
 box-sizing：content-box;  width=内容区宽度
 box-sizing：border-box;   
 width=内容区宽度+padding宽度+margin宽度 (包含内边距和边框)
-
 ```
 
-#### **清除浮动**
+
+
+
+
+#### **浮动原因和带来的问题 清除浮动**
+
+问题
+
+1. 父元素的高度无法被撑开，影响与父元素同级的元素
+2. 与浮动元素同级的非浮动元素（内联元素）会跟随其后
+
+清除浮动:
+
+1. 父级手动设置 height 
+2. 添加伪元素 设置 clear:both
+3. overflow: hidden oder auto
+
+
+
+#### **BFC?**
+
+- **BFC 是什么?** 
+
+  
+
+  **block formatting context**
+
+BFC 为格式化上下文,产生一个独立的隔绝容器,容器的元素不会被外面的元素所影响
+
+- 触发条件?
 
 ```css
- .clearfix:after{
-     content: '';
-     display: block; /*或者 table*/
-     clear: both;
- }
- .clearfix{
-     zoom: 1; /* IE 兼容*/
- }
+dispaly:inline-block
+or
+position: absolute / fixed
+or
+overflow的值不为visible（默认）
+or
+float的值不为none（默认）
 ```
+
+
+
+- 特性以及作用?
+
+
+
+
 
 
 
@@ -272,17 +425,64 @@ Animation： 是动画属性 可以定义多个关键帧 不需要事件的触�
 
 ## 二星题目
 
+#### **CSS 三大特性**
+
+1. 层叠性  解决样式冲突 最后书写为准
+2. 继承性    盒子模型属性、文本属性, 定位属性  浮动 不可继承
+3. 优先级
+
+
+
 #### **常用css 选择器？**
+
+- 基础选择器  *  p   .info   #infoE
+- 组合选择器  E,F  多元素  E F 所有后代   E>F 子元素 直接后代  E+F 
+- 属性选择器   a[href]
+- 伪类 伪元素
+
+
 
 #### **CSS  选择器权重 ?**
 
 1. 选择器越具体，优先级越高，比如： #xxx > .yyy 
 2. 如果是同样的优先级，后面写的会覆盖前面的 
-3. 权重：!important > 行内样式 > #xxx > .yyy > 继承 > 默认
+3. 权重：!important > 行内样式 > #xxx > .yyy / 伪类/ 属性> * > 继承 > 默认
+
+
+
+
 
 #### **CSS 实现三角形?**
 
+首先，需要把元素的宽度、高度设为0。然后设置边框样式。
+
+```css
+width : 0 ;
+
+height : 0 ;
+
+border -top : 40px solid transparent;
+
+border -left : 40px solid transparent;
+
+border -right : 40px solid transparent;
+
+border -bottom : 40px solid #ff0000;
+```
+
+
+
 #### **CSS Sprites?**
+
+将一个页面涉及到的所有图片都包含到一张大图中去
+
+然后利用CSS的 background-image，background- repeat，background-position 的组合进行背景定位。利
+
+用CSS Sprites能很好地减少网页的http请求，从而大大的提高页面的性能；CSS Sprites能减少图片的字节
+
+
+
+
 
 #### **CSS 动画?**
 
@@ -291,34 +491,139 @@ Animation： 是动画属性 可以定义多个关键帧 不需要事件的触�
 - animation  属性
 - transition 属性
 
+
+
+
+
 ## 一星问题
 
-**px rem  em 单位的区别？vw vh?**
+#### **px rem  em 单位的区别？vw vh?**
 
-rem是根据根的font-size变化，而em是根据父级的font-size变化 
+px: 固定长度单位 默认字高16px 
+
+rem:  根据根的font-size变化，而em是根据父级的font-size变化 
 
 rem：相对于根元素html的font-size，假如html为font-size：12px，那么，在其当中的div设置为font-size：2rem,就是当中的div为24px
 
 em：相对于父元素计算，假如某个p元素为font-size:12px,在它内部有个span标签，设置font-size：2em,那么，这时候的span字体大小为：12*2=24px
 
-**CSS import 引入方式 link引入方式的区别？**
+视口单位
 
-**伪类 / 伪元素?**
+vw = view width        vh = view height
 
-#### **CSS 新特性?**
+**是利用视口单位实现，依赖于视口大小而自动缩放，**失去了最大最小宽度的限制。
+
+**怎么让Chrome支持小于12px 的文字？**
 
 ```css
+span {
+    font-size: 12px;
+	display: inline-block;
+	-webkit-transform:scale(0.8);
+}
+//至于为什么要设置display:inline-block； 因为scale属性只对可以定义宽高的元素有效。
+
+Chrome 中文界面下默认会将小于 12px 的文本强制按照 12px 显示
+可通过加入 CSS 属性 -webkit-text-size-adjust: none; 解决
+```
+
+
+
+
+
+
+
+#### **CSS import 引入方式 link引入方式的区别？**
+
+link 除了加载css 外  还可以定义其他事务  || 在页面载入的时候可以加载 || XHTML 标签  无兼容性问题 || 支持js修改DOM
+
+@import 只用来加载CSS  ||  页面完全载入后才进行加载
+
+! `<link>`会进行并行下载,不会停止对当前文档的处理
+
+
+
+#### **伪类 / 伪元素?**
+
+**::before 和 :after中双冒号和单冒号有什么区别?**
+
+伪类使用:  :hover   :active
+
+CSS1  :beore  // 创建一个伪元素 将成为匹配选中的元素的第一个子元素
+
+CSS3:  ::before  来区分伪元素和伪类
+
+
+
+#### **CSS3 新特性?**
+
+```css
+选择器: E[attr]   E:nth-child
+颜色: RGBA HSLA
+背景:  图片尺寸...
+伸缩盒子: 调整主轴对齐justify-content，调整侧轴对齐align-items，伸缩分配flex
 transition：过渡
 transform：旋转、缩放、移动或者倾斜
-animation：动画
-gradient：渐变
-shadow：阴影
+animation：动画   @keyframes 
+gradient：渐变    linear-gradient 线性渐变  radial-gradient 径向渐变
+text-shadow：阴影
 border-radius：圆角
 ```
 
+新增伪类:
+
+- p:first-of-type 选择属于其父元素的首个元素
+- last-of-type 选择属于其父元素的最后元素
+- p:only-of-type 选择属于其父元素唯一的元素
+- p:only-child 选择属于其父元素的唯一子元素
+
 #### **sass 的 mixin?**
 
-mixin 类似于对象,对象里面写好CSS 属性,那里用到了就引用这个对象,避免重复写CSS
+mixin 类似于对象,对象里面写好CSS 属性,那里用到了就引用这个对象,避免重复写CSS\
+
+```css
+/* 定义一个类 */
+.roundedCorners(@radius: 5px) {
+  -moz-border-radius: @radius;
+  -webkit-border-radius: @radius;
+  border-radius: @radius;
+}
+#header {
+  .roundedCorners;
+}
+```
+
+
+
+
+
+#### **什么是响应式设计?响应式设计的基本原理是什么?**
+
+响应式网站设计(Responsive Web design)
+
+一个网站能够兼容多个终端，而不是为每一个终端做一个特定的版本。基本原理是通过媒体查询检测不同的设备屏幕尺寸做处理。页面头部必须有meta声明的viewport
+
+如何兼容低版本的IE？
+
+```html
+<meta name="’viewport’" content= "”width=device-width," initial -scale= "1." maximum -scale= "1,user-scalable=no ”"/>
+```
+
+
+
+#### **全屏滚动的原理是什么?用到了CSS的哪些属性？**
+
+原理：有点类似于轮播，整体的元素一直排列下去，假设有5个需要展示的全屏页面，那么高度是500%，只是展示100%，剩下的可以通过transform进行y轴定位，也可以通过margin-top实现
+
+```css
+overflow：hidden；  让视图中只包括一个分页;设置滑动分页的长宽都是 100%; 
+transition：all 1000ms ease；
+//外部容器设置 transition 过渡效果, 并设置为相对定位, 滚动是修改外部容器的 Top 值, 实现滚动效果
+```
+
+
+
+
 
 # **JS**
 
@@ -358,7 +663,12 @@ instanceof 顺着原型链向上寻找
 
 
 
+#### **ES 6 新特性**
 
+1. 变量声明: let
+2. 解构赋值
+3. 模板字符串
+4. 箭头函数
 
 
 
@@ -598,6 +908,8 @@ Function.prototype.myBind = function () {
 
 
 
+
+
 **DOM 事件流 和 事件委托?**
 
 DOM事件流 347页
@@ -816,15 +1128,12 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
   // async await 最简单那的使用就是 省略掉.then 直接拿到返回的结果
   //目的是把异步代码写成同步代码(看起来像)
   // 但如果 多个异步操作没有依赖性  使用await 导致性能降低
-  ```
-  
 
 **前端使用异步的场景有哪些?**
 
 -  网络请求  如 ajax 图片加载
 - 定时任务 如setTimeout
 - 事件处理
-- nodejs 读取文件
 
 
 
@@ -848,7 +1157,7 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
 
 #### **解构赋值**
 
-​```js
+```js
 数组解析：
 let [a, b, c] = [1, 2, 3]   //a=1, b=2, c=3
 let [d, [e], f] = [1, [2], 3]    //嵌套数组解构 d=1, e=2, f=3
@@ -863,7 +1172,7 @@ let {d, e:{f}} = obj    //嵌套解构 d='aaaa' f='bbbb'
 let g;
 (g = {g: 'aaaa'})   //以声明变量解构 g='aaaa'
 let [h, i, j, k] = 'nice'    //字符串解构 h='n' i='i' j='c' k='e'
-  ```
+```
 
 
 
@@ -1272,9 +1581,25 @@ GET 最大长度是因为 web 服务器限制 URL 的长度
 
 #### **一次 HTTP 请求的过程?**
 
-#### **怎么跨域, JSONP CORS postMessage 是什么?** 
+- DNS
+
+- TCP 3次握手
+
+- 浏览器发起HTTP 请求
+
+- 服务器相应HTTP 请求
+
+- 浏览器解析html 并请求HTML 中的资源
+
+  [详细博客]:https://www.cnblogs.com/tylerdonet/p/11613455.html
+
+  
 
 
+
+
+
+#### **怎么跨域, JSONP CORS postMessage 是什么?**
 
 **CORS**
 
@@ -1306,7 +1631,6 @@ HTTP 头部中额外添加 Origin
 JSONP和AJAX相比的优缺点？
 1.JSONP可以跨域 
 2.因为JSONP是通过script标签发送的GET请求，所以读不到AJAX那么精确的状态码
-
 ```
 
 
@@ -1385,7 +1709,7 @@ func();
 
 #  **浏览器**
 
-#### **介绍一下你对浏览器内核的理解?**
+#### 你对浏览器内核的理解?**
 
 内核由两部分组成:
 
@@ -1404,4 +1728,22 @@ Firefox:  Gecko
 Safari: Webkit
 
 IE: Trident  未开源
+
+
+
+
+
+
+
+# 开放性问题
+
+###   如果你新接手一个项目的维护和开发，你会怎么做？
+
+###  开发工作和用户体验是一种什么关系？
+
+### 在你看来，如何养成好的编程习惯？
+
+####  请问你熟悉哪些框架？为什么选择他们？
+
+#### 你怎么看待WEB前端工程师在公司业务中的角色？
 

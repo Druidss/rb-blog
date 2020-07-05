@@ -1,6 +1,6 @@
 ---
 id: JavascriptProblem
-title: Interview
+title: JavascriptProblem
 author: Adrian Yang
 author_title: Front End Engineer @ Facebook
 author_url: https://github.com/Druidss
