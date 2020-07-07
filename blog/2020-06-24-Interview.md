@@ -326,7 +326,7 @@ HTML5 drag API
 
 ## 三星题目
 
-**position 属性 ?他们的用法和区别?**
+#### **position 属性 ?他们的用法和区别?**
 
 绝对定位 相对定位 固定定位 sticky粘性定位
 
@@ -336,7 +336,7 @@ HTML5 drag API
 
 **relative**
 
-相对定位,元素图例常规流, 使用4个偏移属性的时候不影响文档流
+相对定位,相对于自身原有位置进行偏移,元素图例常规流, 使用4个偏移属性的时候不影响文档流
 
 **absolute**
 
@@ -498,15 +498,54 @@ div.main::after{
 4. 只使用一个额外的div
 5. 最简单css  csst hack
 
+**双飞翼(double-wing) 和 圣杯布局(holy-grail-layout)的区别?**
+
+圣杯布局:  为了中间的div 不被遮挡 将中间div 设置 padding-left 和 padding-right后, 将左右的两个div 设置relative,并分别配合 right  和 left 属性.
+
+[圣杯布局]:https://lhammer.cn/You-need-to-know-css/#/zh-cn/holy-grail-layout?v=1
+
+双飞翼布局: 直接在中间(center )的div 内部创建自div 来防止内容, 并在该自div 中 用margin-left 和 margin-right 为左右两栏留出位置.
+
+[双飞翼布局]:https://lhammer.cn/You-need-to-know-css/#/zh-cn/double-wing-layout?v=1
+
 
 
 **多栏布局**
+
+modern solution 是 使用 flex / grid 布局.  适合 mobile-friendly
 
 a 栏栅格系统 
 
 使用浮动来实现多栏布局
 
 b 多列布局
+
+flex 布局
+
+```css
+.box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.box .box-item {
+  width: 100px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+ justify-content: flex-start; 来实现元素的左对齐
+然后在子元素上加 margin-right: 10px; 来保证同一行的元素之间有空隙
+
+.box {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+}
+```
+
+
 
 
 
@@ -618,11 +657,7 @@ float的值不为none（默认）
 
 
 
-#### **transition和animation的区别？**
 
-Transition: 与事件相绑定  类似flash 补间动画  设置一个开始关键帧 和 一个结束关键帧
-
-Animation： 是动画属性 可以定义多个关键帧 不需要事件的触发
 
  
 
@@ -696,7 +731,19 @@ border -bottom : 40px solid #ff0000;
 - animation  属性
 - transition 属性
 
+```css
+animation: mymove 5s  infinite
+@keyframes mymove{
+    from{top:0px;}
+    to {top:200px;}
+}
+```
 
+#### **transition和animation的区别？**
+
+Transition: 与事件相绑定  类似flash 补间动画  设置一个开始关键帧 和 一个结束关键帧
+
+Animation： 是动画属性 可以定义多个关键帧 不需要事件的触发
 
 
 
@@ -719,6 +766,8 @@ vw = view width        vh = view height
 **是利用视口单位实现，依赖于视口大小而自动缩放，**失去了最大最小宽度的限制。
 
 **怎么让Chrome支持小于12px 的文字？**
+
+设置缩放
 
 ```css
 span {
@@ -864,7 +913,7 @@ body,div,p {
 
 ##　三星问题
 
-**基本数据类型？ 哪些是在堆里 哪些实现栈里？**
+#### **基本数据类型？ 哪些是在堆里 哪些实现栈里？**
 
 - 基本类型
 
@@ -896,6 +945,26 @@ body,div,p {
 
 instanceof 顺着原型链向上寻找
 
+**什么是值？什么是类型？什么是变量？ 它们之间的区别和联系？**
+
+变量中包括 值
+
+类型 指的是 值类型
+
+JavaScript 中 变量的类型可变
+
+**基础类型存放在栈上，引用类型存放在堆上，请问是为什么？** 
+
+字符串是存放在栈上么？对象中有一个 number 属性，那么 number 属性是存放在堆上还是栈上?
+
+栈中内存大小的空间是固定的, 基本类型占用的空间小,大小固定,按值来访问
+
+引用类型占据的空间大,大小不固定储存在栈中影响程序性能
+
+#### **== 的判断逻辑**
+
+在比较前 将被比较的值转换成相同的类型
+
 
 
 #### **ES 6 新特性**
@@ -910,6 +979,12 @@ instanceof 顺着原型链向上寻找
 
 
 #### **原型和原型链?**
+
+原型链能够实现所谓的继承的本质原因是什么？
+
+因为在访问对象的属性的时候 不仅在该对象上搜寻,还有依照原型链向上搜索
+
+但引用类型的值会被所有实例共享, 且不能传递参数
 
 - 给你一个构造函数 描述 构造函数 实例 以及原型之间的关系
 
@@ -1055,6 +1130,14 @@ class jQuery {
 
 解决方法: 在退出函数之前,将使用的局部变量全部删除 element = null;
 
+#### **作用域的本质是什么？闭包和作用域的关系是什么？**
+
+作用域限制了 哪个变量在哪里有效
+
+在执行上下文的创建阶段:  创建了作用域链(当前变量对象 + 所有父级的变量对象)
+
+(闭包)回调函数 因为作用域链仍可以访问值  通过作用域 实现了函数的闭包
+
 ```js
 闭包的经典题，输出什么？
 for(var i = 0; i < 3; i++) {
@@ -1133,6 +1216,12 @@ fn(); //100
 
 
 
+
+
+
+
+
+
 #### **this 指向? 在不同的场景下如何取值?**
 
 this  取什么值 不是在函数定义的时候确定,而是在函数执行的时候确定的.
@@ -1156,7 +1245,7 @@ fn = ()=> {}
 
 
 
-#### **call apply bind?**
+#### **call app`ly bind?**
 
 1. call()和apply()的第一个参数相同，就是指定的对象。这个对象就是该函数的执行上下文。 
 2. call()和apply()的区别就在于，两者之间的参数。 
@@ -1288,18 +1377,16 @@ sessionStorage 声明周期是一个会话 而 localStorage 存储的数据生�
 #### **let const var 的区别?**
 
 1. var声明变量可以重复声明，而let不可以重复声明 
-
 2. var是不受限于块级的，而let是受限于块级 
-
 3. var会与window相映射（会挂一个属性），而let不与window相映射 
-
 4. var可以在声明的上面访问变量，而let有暂存死区，在声明的上面访问变量会报错 
-
 5. const声明之后必须赋值，否则会报错
-
 6. const定义不可变的量，改变了就会报错
-
 7. const和let一样不会与window相映射、支持块级作用域、在声明的上面访问变量会报错
+
+**为什么不建议使用var**
+
+因为var 里面会变量提升, 会输出 undefined 而用let定义变量, 会产生 ReferenceError
 
 ```js
 for(let i= 0; i < 3; i++){
@@ -1324,7 +1411,7 @@ for (let i = 0; i < 10l i++){
 
 ```
 
-
+#let #const
 
 
 
@@ -1534,7 +1621,7 @@ null == undefined // true
 - Array 这些方法会不会改变原始的数值?
 - slice splice concar filter map reduce
 - Object
-- keys/assign(用于浅拷贝)
+- keys/assign(用于浅拷贝) 
 
 ```js
 map: 遍历数组，返回回调返回值组成的新数组
@@ -1556,11 +1643,19 @@ reduce / reduceRight(fn(prev, cur)， defaultPrev):
 
 
 
+
+
 #### **requestAnimationFrame?**
+
+使用js 实现一个持续的动画效果
 
 相比使用setInterval 实现的动画效果,requestAnimationFrame 的优势是?
 
+- 浏览器优化并行的动画动作, 合并动作在一个渲染周期内完成. 更流畅
+- 解决毫秒的不精确性
+- 避免过度渲染( 渲染频率太高,..)
 
+类似于定时器的清除方法  cancelAnimationFrame
 
 
 
@@ -1670,25 +1765,89 @@ btn.removeEventListener('click',fn,false);//有效
 
 #### **数组去重?**
 
-``` js
+- 两层循环法
 
-1.计数排序的逻辑（只能正整数）
- var a = [4,2,5,6,3,4,5]
- var hashTab = {}
- for(let i=0; i<a.length;i++){
-     if(a[i] in hashTab){
-         // 什么也不做
-     }else{
-         hashTab[ a[i] ] = true
-     }
- }
- //hashTab: {4: true, 2: true, 5: true, 6:true, 3: true}
- console.log(Object.keys(hashTab)) // ['4','2','5','6','3']
+- 利用语法自身键的不可重复性
+
+- [原博客]:https://segmentfault.com/a/1190000016418021
+
+  
+
+``` js
+1. 利用 includes
+function unique(arr) {
+    if (!Array.isArray(arr)) {
+        console.log('type error!')
+        return
+    }
+    var array =[];
+    for(var i = 0; i < arr.length; i++) {
+            if( !array.includes( arr[i]) ) {//includes 检测数组是否有某个值
+                    array.push(arr[i]);
+              }
+    }
+    return array
+}
  
 2.Set 去重
- Array.from(new Set(a))
- 
-3.WeakMap 任意类型去重
+function unique(arr){
+	return Array.from(new Set(arr));
+}
+// 但无法去除掉空对象{}
+//set 类似于数组 只不过成员值是唯一的, 没有重复的值
+
+3. splice 去重 
+function unique(arr){            
+        for(var i=0; i<arr.length; i++){
+            for(var j=i+1; j<arr.length; j++){
+                if(arr[i]==arr[j]){   
+                    arr.splice(j,1);
+                    j--;
+                }
+            }
+        }
+return arr;
+}
+
+
+4. Map //类似于对象  提供值对值的对应, 一种更完善的Hash 结构实现
+创建一个空Map数据结构，遍历需要去重的数组，把数组的每一个元素作为key存到Map中。
+由于Map中不会出现相同的key值，所以最终得到的就是去重后的结果
+function arrayNonRepeatfy(arr) {
+  let map = new Map();
+  let array = new Array();  // 数组用于返回结果
+  for (let i = 0; i < arr.length; i++) {
+    if(map .has(arr[i])) {  // 如果有该key值
+      map .set(arr[i], true); //添加键
+    } else { 
+      map .set(arr[i], false);   // 如果没有该key值
+      array .push(arr[i]);
+    }
+  } 
+  return array ;
+}
+
+
+5. hasOwnProperty
+利用hasOwnProperty 判断是否存在对象属性
+// filter 为数组的每个元素调用callback 函数,返回值为true 的元素创建一个新数组
+
+function unique(arr) {
+    var obj = {};
+    return arr.filter(function(item, index, arr){
+        return obj.hasOwnProperty(typeof item + item) ? false : (obj[typeof item + item] = true)
+    })
+}
+
+
+6.  利用 filter
+function unique(arr) {
+  return arr.filter(function(item, index, arr) {
+//indexOf()方法返回在数组中可以找到一个给定元素的第一个索引，如果不存在，则返回-1。
+    //当前元素，在原始数组中的第一个索引==当前索引值，否则返回当前元素
+    return arr.indexOf(item, 0) === index;
+  });
+
 ```
 
 
@@ -1765,6 +1924,16 @@ ES6  装饰器
 
 　Json简单说就是JavaScript中的对象和数组，所以这两种结构就是对象和数组两种结构，通过这两种结构可以表示各种复杂的结构。
 
+怎么判断两个对象是否相等
+
+转成字符串进行判断
+
+```js
+JSON.stringify(obj)==JSON.stringify(obj2);
+```
+
+
+
 # **框架 Vue**
 
 Vue的生命周期? 请求后端数据在哪个声明周期?
@@ -1784,6 +1953,33 @@ router-link
 
 
 # **框架 React**
+
+#### **React / Vue 框架的基本原理是什么?**
+
+**MVC** 
+
+model  view  controller
+
+**MVVM** 
+
+- model   数据模型
+- view  页面
+- viewmodel 作为桥梁沟通view 和 Model 
+
+在JQery 时期, 如果需要刷新UI 那么要先取得DOM 再更新UI,这样 数据 和 业务逻辑就和 页面存在强耦合
+
+在MVVM 中 UI 通过数据驱动, 数据一旦改变就会相应的刷新UI. UI 如果改变就会改变其中的数据, 这种方式就可以在业务处理中只关系数据的流转,而无需与页面直接打交道. (ViewModel只关心数据和业务的处理, 不关心View 如何处理数据),这样的情况下, view 和 model都可以独立出来, 任何一方改变了也不一定需要改变另一方,并且可以将一些可复用的逻辑放在一个ViewModel 中,让多个View 复用之歌ViewModel
+
+在MVVM 最核心的就是`数据双向绑定` (Angluar 脏数据检测 Vue 数据劫持)
+
+#### **路由原理**
+
+本质就是监听URL 的变化,然后匹配路由规则, 然后显示相应的页面, 并且无需刷新
+
+目前单页面路由两种实现方式
+
+- Hash 模式  `www.test.com/##/`  当## 哈希值变化的时候 用过hashchange监听URL变化,不想服务端请求数据, 从而跳转页面
+- history 模式  HTML5 推出
 
 **受控组件 vs  非受控组件?**
 
@@ -1851,6 +2047,7 @@ HTTP 可以分为两个部分，即请求和响应。
 403 Forbidden // !拒绝  服务器收到请求，但是拒绝提供服务。服务器通常会在响应正文中给出不提供服务的原因。
 404 Not Found 请求的资源不存在，比如输入了错误的URL。
 500 Internal Server Error 服务器发生不可预期的错误，导致无法完成客户端的请求。
+502
 503 Service Unavailable 服务器当前不能够处理客户端的请求，在一段时间之后，服务器可能会恢复正常。
 
 补充：301 和 302 的区别是什么？
@@ -1939,9 +2136,21 @@ HTTP1.x 基于文本
 
 根据header 内容来决定
 
-强缓存: 浏览器直接从本地存储中获得数据 不与服务器进行交互 (200 from cache)
+**强缓存:** 
 
-协商缓存:  浏览器发送请求(Get), 服务器来告知告知缓存是否可用 (304 not modified)
+浏览器直接从本地存储中获得数据 不与服务器进行交互 (200 from cache)
+
+- Expires（该字段是 `http1.0` 时的规范，值为一个绝对时间的 `GMT` 格式的时间字符串，代表缓存资源的过期时间）
+- Cache-Control:max-age（该字段是 `http1.1` 的规范，强缓存利用其 `max-age` 值来判断缓存资源的最大生命周期，它的值单位为秒）
+
+**协商缓存:**  
+
+浏览器发送请求(Get), 服务器来告知告知缓存是否可用 (304 not modified)
+
+- Last-Modified（值为资源最后更新时间，随服务器response返回）
+- If-Modified-Since（通过比较两个时间来判断资源在两次请求期间是否有过修改，如果没有修改，则命中协商缓存）
+- ETag（表示资源内容的唯一标识，随服务器response返回）
+- If-None-Match（服务器通过比较请求头部的If-None-Match与当前资源的ETag是否一致来判断资源是否在两次请求之间有过修改，如果没有修改，则命中协商缓存）
 
 
 
@@ -2088,13 +2297,7 @@ ajax 的 readyState 状态都代表什么？
 - 3：正在接受服务器返回的数据
 - 4：完成响应
 
-```js
-var func = function func(){
-    console.log(func === func)
-}
-func();
-// 我自己等于我自己 两个函数的地址相同
-```
+
 
 
 
