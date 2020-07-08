@@ -175,7 +175,9 @@ XHTML 使用xml 的语法来 规范的HTMLI
 
 触发条件: 改变元素的外观属性: color background-color
 
-注意: Table 及其内部的元素需多次激素三才能确定好在其渲染树节点的属性值,比同等的元素要花费更多时间,所以避免使用Table 布局页面
+注意: Table 及其内部的元素需多次激素三才能确定好在其渲染树节点的属性值,比同等的元素要花费更多时间,所以避免使用Table 布局页面.
+
+
 
 **重排 (重构 回流 reflow):**
 
@@ -274,6 +276,12 @@ href
 #### **Script 标签的 defer 和 async?**
 
 定义了 derfer 的标签按照先后顺序进行请求
+
+1.脚本之间没有依赖关系的，使用sync  并行下载完就执行
+
+2.脚本之间有依赖关系的，使用defer  等HTML 全部渲染完成后 执行
+
+
 
 **Noscript 标签的作用：**
 
@@ -425,9 +433,10 @@ align-content: space-between    //多行对齐方式
 
 1. 使用padding  只要设置上下内边距  但 父元素不能固定设置高度
 2. line-height =  height(父元素的) ||  父元素可以设置高度  但只适合单行文字
-3. 弹性布局 justify-content = center;
-4. 栅格布局  grid 
-5. 伪元素  设置 vertical-align: middle;
+3. 弹性布局flex-direction:columm;  justify-content = center;  align-items：center;
+4. tale 设置导航栏： 父： display：table； 子元素：display：tale-cell； vertical-align：middle
+5. 栅格布局  grid （替代table） 等分排列 +  居中  更适合多行多列的布局
+6. 设置伪元素  设置 vertical-align: middle;  使得基线向上偏移
 
 ```css
 // grid 等分排列并设置 居中
@@ -449,18 +458,40 @@ div.main::after{
     width: 0;
     vertical-align: middle;
 }
+
+自绝父相
+div{
+	position: relative;
+}
+i {
+    height: 50px;
+    width: 50px;
+    position: absolute;
+    top:50%;  但此时并没有完全居中
+    margin-top：-25px;  再将元素自身的高度向上挪动50%
+    
+}
 ```
 
 
 
-#### **如何居中DIV   如何居中一个浮动元素?**
 
-非浮动元素居中:  
 
-1. margin: 0 auto  并设置宽度   // 块级元素
-2. text-align:  center
 
-浮动元素居中: 
+
+#### **水平居中?**
+
+**（非浮动）元素居中:**  
+
+块级元素水平居中：  
+
+margin: 0 auto  并设置宽度   // 块级元素
+
+设置块状元素的父元素为 flex justify-content： center；
+
+行内元素：  为父元素设置：  text-align:  center
+
+**浮动元素居中:** 
 
 ```css
 .son {
@@ -471,6 +502,7 @@ div.main::after{
         or
     transform: translateX(-50%); 移动X轴的位置
 }
+
 // flex 布局
 .parent {
     display:flex;
@@ -481,6 +513,23 @@ div.main::after{
     width: 200px;//有无宽度不影响居中
 }
 ```
+
+
+
+#### **水平垂直居中** 
+
+flex 布局
+
+```css
+
+height:600px;  
+display:flex;
+justify-content:center;  //子元素水平居中
+align-items:center;      //子元素垂直居中
+
+```
+
+
 
 
 
@@ -545,15 +594,62 @@ flex 布局
 }
 ```
 
-
-
-
-
 **弹性布局 flexbox**
 
 **瀑布流布局**
 
 **响应式布局**
+
+
+
+#### **Flex 弹性布局**
+
+- Felx 容器  flex container 采用Flex布局的元素
+- Felx 项目 flex item  容器的所有子元素
+- 主轴 main axis
+- 交叉轴 cross axis
+
+容器属性
+
+- flex-direction： row / column  决定主轴方向
+- flex-wrap: wrap / nowrap  是否换行
+- flex-flow  前两者的合并形式
+- justify-content  主轴上的对齐方式
+- align-items    交叉轴上的对齐方式
+
+项目属性
+
+- order
+- flex-grow： 缺省 0 0 代表不扩展  非零为·`比例扩展`  父容器存在剩余空间时候生效
+- flex-shrink： 缺省 1   0 代表不压缩  非零代表 `比例压缩`  父容器超出总空间之后生效
+- flex-basis： auto   auto 默认大小   分配剩余空间之前的预处理
+- flex： flex-grow   felx-shrink  flex-basis
+
+
+
+
+
+#### **Grid 布局**
+
+Grid  容器/网格线/单元/区域/轨道
+
+容器属性:
+
+- Grid-template-rows
+- Grid-template-columns： 100px 200px 300px
+- Grid-template-ares
+
+区域属性
+
+- Grid-area
+
+**Flex 与 Grid 布局的对比**
+
+Flex 布局是轴线布局，只能指定"项目"轴线的位置, 可以看作是一维布局
+
+Grid布局则是将容器划分为 行 和 列,产生单元格,然后指定项目所在的单元格. 看作二维布局
+
+
 
 
 
@@ -698,15 +794,10 @@ float的值不为none（默认）
 
 ```css
 width : 0 ;
-
 height : 0 ;
-
 border -top : 40px solid transparent;
-
 border -left : 40px solid transparent;
-
 border -right : 40px solid transparent;
-
 border -bottom : 40px solid #ff0000;
 ```
 
@@ -778,7 +869,6 @@ span {
 //至于为什么要设置display:inline-block； 因为scale属性只对可以定义宽高的元素有效。
 
 Chrome 中文界面下默认会将小于 12px 的文本强制按照 12px 显示
-可通过加入 CSS 属性 -webkit-text-size-adjust: none; 解决
 ```
 
 
@@ -1086,19 +1176,16 @@ class jQuery {
 	get(index) {
 		return this[index];
 	}
-
 	each(fn) {
 		for (let i = 0; i< this.length; i++){
 			const elem = this[i];
 		}
 	}
-
 	on(type,fn){
 		return this.each(elem => {
 			elem.addEventListener(type,fn,false)
 		})
 	}
-
 }
 ```
 
@@ -1245,7 +1332,7 @@ fn = ()=> {}
 
 
 
-#### **call app`ly bind?**
+#### **call apply bind?**
 
 1. call()和apply()的第一个参数相同，就是指定的对象。这个对象就是该函数的执行上下文。 
 2. call()和apply()的区别就在于，两者之间的参数。 
@@ -1499,6 +1586,8 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
   //目的是把异步代码写成同步代码(看起来像)
   // 但如果 多个异步操作没有依赖性  使用await 导致性能降低
 
+
+
 **前端使用异步的场景有哪些?**
 
 -  网络请求  如 ajax 图片加载
@@ -1517,7 +1606,14 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
 
 **事件循环** eventloop
 
-1. 在代码执行的过程中会执行同步代码,然后宏任务(script setTimeout),进入宏任务队列,微任务(Promise.then() , Promise) 进入微任务队列
+- 同步任务都在主线程上执行，形成一个执行栈
+- 主线程之外，还存在一个任务队列。只要异步任务有了运行结果，就在任务队列之中放置一个事件。
+- 一旦执行栈中的所有同步任务执行完毕，系统就会读取任务队列,将队列中的事件放到执行栈中依次执行
+
+
+
+1. 在代码执行的过程中会执行同步代码,然后宏任务(script setTimeout),进入宏任务队列,执行过程中如果遇到微任务
+   微任务(Promise.then() , Promise) 进入微任务队列 
 2. 当宏任务执行完事之后出队, 检查微任务列表, 继续执行到微任务知道执行完毕
 3. 执行浏览器的UI 渲染过程
 4. 检查是否有 Web Worker 任务 有则执行
@@ -1771,8 +1867,6 @@ btn.removeEventListener('click',fn,false);//有效
 
 - [原博客]:https://segmentfault.com/a/1190000016418021
 
-  
-
 ``` js
 1. 利用 includes
 function unique(arr) {
@@ -1862,7 +1956,7 @@ function trim(string){
 
 
 
-**作用域链?**
+
 
 #### **垃圾回收?**
 
@@ -1924,7 +2018,7 @@ ES6  装饰器
 
 　Json简单说就是JavaScript中的对象和数组，所以这两种结构就是对象和数组两种结构，通过这两种结构可以表示各种复杂的结构。
 
-怎么判断两个对象是否相等
+#### **怎么判断两个对象是否相等**
 
 转成字符串进行判断
 
@@ -1933,6 +2027,20 @@ JSON.stringify(obj)==JSON.stringify(obj2);
 ```
 
 
+
+setTimeout(fun,0)的使用场景
+
+! 调整事件的发生顺序
+
+开发中，某个事件先发生在子元素，然后冒泡到父元素，即子元素的事件回调函数，会早于父元素的事件回调函数触发。如果，想让父元素的事件回调函数先发生，就要用到`setTimeout(f, 0)`。
+
+
+
+**监控input 中的文本变化.**  
+
+用户自定义的回调函数，通常在浏览器的默认动作之前触发。比如，用户在输入框输入文本，`keypress`事件会在浏览器接收文本之前触发。所以获取不到当前文本的数值
+
+控制台输入的文本内容是操作前的旧内容。为了获取操作后的新文本内容，可以将对文本的获取和处理放在setTimeout中延时执行
 
 # **框架 Vue**
 
@@ -1956,9 +2064,31 @@ router-link
 
 #### **React / Vue 框架的基本原理是什么?**
 
+**Vue:** 
+
+(MVVM  双向绑定)   最强调的是 `数据响应`
+
+Vue 是一个以数据响应式为为核心的UI 框架,核心思想是 把所有的数据放到一个对象里面, 然后去操作对象,对象就会改变这个数据, 监听这个改变,再去改变UI
+
+// 不需要DOM Diff 
+
+**React:**  
+
+单向数据流, UI=f(data)  核心是`函数式`  - 引用透明  纯函数 数据不可变
+
+
+
+React 是指用有个函数来表示一个一个组件, 我将数据放进去,就将数据渲染到组件里面. 然后我们在放数据的时候做到不可变,如果我更新 不是修改之前的数据,而是新生成一个不一样的数据.函数得到一个新的UI 这个新的UI和旧的UI 做一个DOM Diff, 得到patch 然后将patch 更新到 DOM 树.
+
+
+
 **MVC** 
 
-model  view  controller
+model 
+
+ view 页面层 渲染数据
+
+ controller 接受页面层的数据 调用模型层进行业务逻辑的处理
 
 **MVVM** 
 
@@ -1970,7 +2100,25 @@ model  view  controller
 
 在MVVM 中 UI 通过数据驱动, 数据一旦改变就会相应的刷新UI. UI 如果改变就会改变其中的数据, 这种方式就可以在业务处理中只关系数据的流转,而无需与页面直接打交道. (ViewModel只关心数据和业务的处理, 不关心View 如何处理数据),这样的情况下, view 和 model都可以独立出来, 任何一方改变了也不一定需要改变另一方,并且可以将一些可复用的逻辑放在一个ViewModel 中,让多个View 复用之歌ViewModel
 
-在MVVM 最核心的就是`数据双向绑定` (Angluar 脏数据检测 Vue 数据劫持)
+在MVVM 最核心的就是`数据双向绑定`  ? 还是数据相应? (Angluar 脏数据检测 Vue 数据劫持)
+
+**MVVM 与MVC  的区别**
+
+MVVM 通过数据显示视图而不是节点操作
+
+MVVM 解决了MVC 中大量DOM 操作的问题
+
+
+
+#### **Hooks 如何在函数内实现dataState ?**
+
+const  [state,setState] = useState();
+
+useState   : 一个结构赋值   state  setState(1) 为什么没有更新:   还会显示呢?   组件重新运行了
+
+useEffect : 模拟类组件的声明周期 
+
+
 
 #### **路由原理**
 
@@ -1992,6 +2140,12 @@ model  view  controller
 
 
 **React 如何实现组件之间的通信?**
+
+数据是单向 的 通过props由父组件向自组件传值
+
+父组件向自组件传一个函数, 通过这个函数的回调,拿到自组件的值
+
+发布订阅模式  Context 
 
 
 
@@ -2018,6 +2172,8 @@ reducer action store
 
 
 never 类型是什么?
+
+
 
 # **HTTP 协议**
 
