@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'My Site',
+  title: 'AdrianYang',
   tagline: 'The tagline of my site',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
@@ -8,7 +8,7 @@ module.exports = {
   projectName: 'docusaurus', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'My Site',
+      title: 'AdrianYang',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -20,9 +20,9 @@ module.exports = {
         //   label: 'Docs',
         //   position: 'left',
         // },
-        {to: 'blog', label: 'Blog', position: 'right'},
+        {to: '/', label: 'Blog', position: 'right'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/druidss',
           label: 'GitHub',
           position: 'right',
         },
