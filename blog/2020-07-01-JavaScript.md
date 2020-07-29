@@ -32,3 +32,21 @@ new 操作符号的 最后一步为 将构造函数的 prototype  属性关联�
 ## 2
 
 运算中  +  号默认转换成字符串  - 号默认转换成数字
+
+## 3
+
+装饰器语法
+
+
+
+
+
+```js
+@demo
+class MyClass
+======
+demo = demo(Myclass)
+```
+
+
+
