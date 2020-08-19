@@ -5,7 +5,7 @@ author: Adrian Yang
 author_title: Front End Engineer
 author_url: https://github.com/Druidss
 author_image_url: https://avatars2.githubusercontent.com/u/40681152?s=460&u=e324c1f3465c768888c1fcf798b5f5eb1be9d60d&v=4
-tags: [react, JavaScript, FroneEnd]
+tags: [react, JavaScript, FrontEnd]
 ---
 
 # 1 react中父组件调用子组件的方法
@@ -13,6 +13,8 @@ tags: [react, JavaScript, FroneEnd]
 引用场景在进行上传这个业务的过程中， 将upload组件 作为上传组件的子组件。这个时候与服务器交互，父组件（上传组件）需要拿到upload组件中的上传的图片在服务器的图片名称。
 
 这个场景下父组件需要直接调用子组件的方法（来获取到服务器response中的图片名称）
+
+<!--truncate-->
 
 父组件
 
