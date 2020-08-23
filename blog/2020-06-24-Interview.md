@@ -1,6 +1,6 @@
 ---
-id: Interview
-title: Interview
+id: InterviewHtml
+title: InterviewHtml
 author: Adrian Yang
 author_title: Front End Engineer @ Facebook
 author_url: https://github.com/Druidss
@@ -94,15 +94,22 @@ line-height  垂直居中
 #### **如何理解语义化?**
 
 1. 让页面能够结构化的展示  header  主要内容:main  侧边栏:side
-
 2. 易于阅读 方便开发人员快速了解页面结构,更具有可读性,利于开发与维护
-
-3.  有利于搜索引擎 SEO
-
-4. 无网络的情况下 不会导致排版混乱
-
+3. 有利于搜索引擎 SEO
+4. 无网络的情况下 不会导
+5. 致排版混乱
 
 header  nav  article  footer
+
+27个元素
+
+1. section 用于区域章节的描述
+2. nav
+3. article
+4. video  audio  embed
+5. header footer 
+
+
 
 **如何区分HTML5 与HTML?**
 
@@ -113,20 +120,16 @@ header  nav  article  footer
 
 
 
-**HTML 5  新增了那些标签 和 API？**
+#### **HTML 5  新增了那些标签 和 API？**
 
 - 语义化标签
+- 音视频处理
 - 表单属性 color  data email  range
 - 存储 localStorage
 - canvas dragAPI webSocket
-
-27个元素
-
-1. section 用于区域章节的描述
-2. nav
-3. article
-4. video  audio  embed
-5. header footer 
+- requestAnimationFrame
+- web socket
+- 地理位置
 
 **API**
 
@@ -527,6 +530,9 @@ justify-content:center;  //子元素水平居中
 align-items:center;      //子元素垂直居中
 
 ```
+
+- dispaly: table-cell
+- JavaScript 实现
 
 
 
@@ -2262,7 +2268,7 @@ function total(n){
 
 ### 在你看来，如何养成好的编程习惯？
 
-####  **请问你熟悉哪些框架？为什么选择他们？**
+### **请问你熟悉哪些框架？为什么选择他们？**
 
-#### 你怎么看待WEB前端工程师在公司业务中的角色？
+### 你怎么看待WEB前端工程师在公司业务中的角色？
 
