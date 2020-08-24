@@ -40,7 +40,7 @@ tags: [interviewCss, interview , FrontEnd]
 
 当元素将要移出便宜范围的时候定位变成 fixed 
 
-
+<!--truncate-->
 
 
 
@@ -410,8 +410,6 @@ width=内容区宽度+padding宽度+margin宽度 (包含内边距和边框)
 #### **BFC?**
 
 - **BFC 是什么?** 
-
-  
 
   **block formatting context**
 
