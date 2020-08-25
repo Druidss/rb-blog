@@ -280,3 +280,393 @@ DOM 解析 和 CSS 解析是两个并行的过程. 浏览器解析DOM 生成DOM 
 * 上面介绍的是一个完整的渲染过程，但现代网页很多都是动态的，这意味着在渲染完成之后，由于网页的动画或者用户的交互，
 	浏览器其实一直在不停地重复执行渲染过程。（重绘重排），以上的数字表示的是基本顺序，这不是严格一致的，
 	这个过程可能重复也可能交叉
+
+
+
+
+
+
+
+## css图层
+​	浏览器在渲染一个页面时，会将页面分为很多个图层，图层有大有小，每个图层上有一个或多个节点。
+​	在渲染DOM的时候，浏览器所做的工作实际上是：
+
+		1. 获取DOM后分割为多个图层
+		2. 对每个图层的节点计算样式结果		（Recalculate style--样式重计算）
+		3. 为每个节点生成图形和位置			（Layout--布局，重排,回流）
+		4. 将每个节点绘制填充到图层位图中		（Paint--重绘）
+		5. 图层作为纹理上传至GPU
+		6. 组合多个图层到页面上生成最终屏幕图像	（Composite Layers--图层重组）
+###图层创建的条件
+	Chrome浏览器满足以下任意情况就会创建图层：
+		1. 拥有具有3D变换的CSS属性
+		2. 使用加速视频解码的`<video>`节点
+		3. `<canvas>`节点
+		4. CSS3动画的节点
+		5. 拥有CSS加速属性的元素(will-change)
+###重绘(Repaint)
+	重绘是一个元素外观的改变所触发的浏览器行为，例如改变outline、背景色等属性。浏览器会根据元素的新属性重新绘制，
+	使元素呈现新的外观。重绘不会带来重新布局，所以并不一定伴随重排。
+	
+
+	需要注意的是：重绘重排都是以图层为单位，如果图层中某个元素需要重绘，那么整个图层都需要重绘。
+	所以为了提高性能，我们应该让这些“变化的东西”拥有一个自己一个图层，
+	不过好在绝大多数的浏览器自己会为CSS3动画的节点自动创建图层。
+
+
+
+##  重排(Reflow 又称：回流)
+​	渲染对象在创建完成并添加到渲染树时，并不包含位置和大小信息。计算这些值的过程称为布局或重排
+​	
+
+	"重绘"不一定需要"重排"，比如改变某个网页元素的颜色，就只会触发"重绘"，不会触发"重排"，因为布局没有改变。
+	"重排"大多数情况下会导致"重绘"，比如改变一个网页元素的位置，就会同时触发"重排"和"重绘"，因为布局改变了。
+
+### 触发重绘的属性
+
+   * color							* background								* outline-color
+
+     
+
+### 常见的触发重排的操作
+​	Reflow(重排) 的成本比 Repaint(重绘) 的成本高很多很多。
+​	一个结点的 Reflow 很有可能导致子结点，甚至父点以及同级结点的 Reflow。
+​	在一些高性能的电脑上也许还没什么，但是如果 Reflow 发生在手机上，那么这个过程是非常痛苦和耗电的。
+​	
+
+	所以，下面这些动作有很大可能会是成本比较高的。
+		当你增加、删除、修改 DOM 结点时，会导致 Reflow , Repaint。
+		当你移动 DOM 的位置
+		当你修改 CSS 样式的时候。
+		当你 Resize 窗口的时候（移动端没有这个问题，因为移动端的缩放没有影响布局视口)
+		当你修改网页的默认字体时。
+		【获取某些属性时(width,height...)！！！！！】
+		注：display:none 会触发 reflow，而 visibility:hidden 只会触发 repaint，因为没有发生位置变化。
+
+
+
+### 优化方案（重绘重排）
+
+我们已知：浏览器渲染页面时经历了如下“细致”的环节：
+  		1.  计算需要被加载到节点上的样式结果（Recalculate style--样式重计算）
+  		2.  为每个节点生成图形和位置（Layout--重排或回流）
+  		3.  将每个节点填充到图层中（Paint--重绘）
+  		4.  组合图层到页面上（Composite Layers--图层重组）
+  		5. 如果我们需要提升性能，需要做的就是减少浏览器在运行时所需要做的工作，即：尽量减少1234步。
+
+
+
+    【具体优化方案如下】：
+    1.元素位置移动变换时尽量使用CSS3的transform来代替对top left等的操作
+    	变换（transform）和透明度（opacity）的改变仅仅影响图层的组合
+    2.【使用opacity来代替visibility】
+        (1).使用visibility不触发重排，但是依然重绘。
+        (2).直接使用opacity即触发重绘，又触发重排（GPU底层设计如此！）。
+        (3).opacity配合图层使用，即不触发重绘也不触发重排。
+            原因：
+    		透明度的改变时，GPU在绘画时只是简单的降低之前已经画好的纹理的alpha值来达到效果，并不需要整体的重绘。
+    		不过这个前提是这个被修改opacity本身必须是一个图层。
+    3.【不要使用table布局】
+    	table-cell
+    4.将【多次改变样式属性的操作合并成一次】操作
+    	不要一条一条地修改DOM的样式，预先定义好class，然后修改DOM的className
+    5.【将DOM离线后再修改】
+    	由于display属性为none的元素不在渲染树中，对隐藏的元素操作不会引发其他元素的重排。
+    	如果要对一个元素进行复杂的操作时，可以先隐藏它，操作完成后再显示。这样只在隐藏和显示时触发2次重排。
+    6.【利用文档碎片】(documentFragment)------vue使用了该种方式提升性能。
+    7.【不要把获取某些DOM节点的属性值放在一个循环里当成循环的变量】
+    	当你请求向浏览器请求一些 style信息的时候，就会让浏览器flush队列，比如：
+    		1. offsetTop, offsetLeft, offsetWidth, offsetHeight
+    		2. scrollTop/Left/Width/Height
+    		3. clientTop/Left/Width/Height
+    		4. width,height
+        当你请求上面的一些属性的时候，浏览器为了给你最精确的值，需要刷新内部队列，
+        因为队列中可能会有影响到这些值的操作。即使你获取元素的布局和样式信息跟最近发生或改变的布局信息无关，
+        浏览器都会强行刷新渲染队列。
+    8.动画实现过程中，启用GPU硬件加速:transform: tranlateZ(0)
+    9.为动画元素新建图层,提高动画元素的z-index
+    10.编写动画时，尽量使用如下的API
+
+
+
+
+
+### requestAnimationFrame----请求动画帧
+
+    1.window.requestAnimationFrame() 
+        说明：该方法会告诉浏览器在下一次重绘重排之前调用你所指定的函数
+        1.参数：该方法使用一个回调函数作为参数，这个回调函数会在浏览器下一次重绘之前调用。
+                回调函数会被自动传入一个参数，DOMHighResTimeStamp，标识requestAnimationFrame()开始触发回调函数的当前时间
+    
+        2.返回值：
+                一个 long 整数，请求 ID ，是回调列表中唯一的标识。是个非零值，没别的意义。你可以传这个值给 				        window.cancelAnimationFrame() 以取消回调函数。
+                
+    备注：若你想在浏览器下次重绘之前继续更新下一帧动画，那么回调函数自身必须再次调用window.requestAnimationFrame()
+     
+    2.window.cancelAnimationFrame(requestID)
+        取消一个先前通过调用window.requestAnimationFrame()方法添加到计划中的动画帧请求。
+        requestID是先前调用window.requestAnimationFrame()方法时返回的值，它是一个时间标识，用法与定时器的id类似。
+
+
+
+```html
+<!--requestAnimationFrame动画.html-->
+<script type="text/javascript">
+  let test = document.getElementById('test')
+  let index = 0
+  let id
+  function move() {
+    index++
+    test.style.transform = `translateX(${index}px)`
+    id = requestAnimationFrame(move)
+  }
+  
+  id =  requestAnimationFrame(move)
+  
+  //两秒钟后动画要停止
+  setTimeout(()=>{
+      cancelAnimationFrame(id)
+  },2000)
+
+```
+
+
+
+
+
+## 函数防抖
+
+- 概念:  延迟要执行的动作, 若在延迟的这段时间内, 再次触发了 则取消之前开启的动作,重新计时
+- 举例:  电脑无操作一分钟后进入休眠, 当40秒时鼠标被移动, 则重新再计时一分钟
+- 实现: 定时器
+- 应用: 搜索时`等用户完整输入内容后`再发送查询请求
+
+```js
+  let inputNode = document.getElementById('user_input')
+  let id
+  inputNode.addEventListener('keyup',function () {
+    let value = inputNode.value
+    if(id){
+      clearTimeout(id)
+    }
+    id = setTimeout(()=>{
+      sendAjax(value)
+    },300)
+  })
+  
+  function sendAjax(data) {
+    console.log(`发送了一次Ajax请求，内容为${data}`)
+  }
+```
+
+
+
+## 函数节流 (throttle)
+
+*  概念：设定一个特定的时间，让函数在特定的时间内只执行一次，不会频繁执行
+*  举例：fps游戏，鼠标按住不松手，子弹也不会连成一条线
+*  实现：定时器、标识
+*  需求：在鼠标滚轮滚动的时候，每隔2秒钟，打印一次
+
+```js
+  let canLog = true
+  document.body.onscroll = function () {
+    if(canLog){
+      console.log(1)
+      canLog = false
+      setTimeout(()=>{
+        canLog = true
+      },2000)
+    }
+  }
+```
+
+
+
+## 什么是CDN？工作原理是什么？
+
+> 内容发布网络CDN（Content  Delivery Networks）
+>  CDN是一组分布在多个不同地理位置的web服务器，用于更加有效的向用户发布内容
+
+
+
+网站通常将其所有的服务器都放在同一个地方，当用户群增加时，公司就必须在多个地理位置不同的服务器上部署内容
+为了缩短http请求的时间，我们应该把大量的静态资源放置的离用户近一点。
+
+    基本思路：
+        尽可能避开互联网上有可能影响数据传输速度和稳定性的瓶颈和环节，使内容传输的更快、更稳定。
+        通过在网络各处放置节点服务器所构成的在现有的互联网基础之上的一层智能虚拟网络，
+        CDN系统能够实时地根据网络流量和各节点的连接、负载状况以及到用户的距离和响应时间等综合信息
+        将用户的请求重新导向离用户最近的服务节点上。
+    
+    基础架构：最简单的CDN网络由一个DNS服务器和几台缓存服务器组成
+        1.用户输入的url，会经过DNS解析“翻译”成对应的ip地址，从而找到CDN专用的服务器。
+        2.CDN“拿到”用户的IP地址，随后和区域负载均衡设备配合，选择一台用户所属区域的区域负载均衡设备，告诉用户向这台设备发起请求。
+        3.上述步骤中的“选择”依据
+                (1).选择的依据包括：根据用户IP地址，判断哪一台服务器距用户最近；
+                (2).根据用户所请求的URL中携带的内容名称，判断哪一台服务器上有用户所需内容；
+                (3).查询各个服务器当前的负载情况，判断哪一台服务器尚有服务能力。
+
+
+
+
+## 浏览器存储
+	Cookie, SessionStorage, LocalStorage这三者都可以被用来在浏览器端存储数据，而且都是字符串类型的键值对！
+	
+	注意：session和SessionStorage不是一个概念！！！在服务端有一种存储方式叫做：session会话存储，常常被简称session
+	后期Node课程中会对cookie和后端所使用的session会话存储进行详细讲解
+	
+	session:会话
+	SessionStorage:浏览器端用于存储数据的容器，常常被前端人员简称为session。
+	session会话存储：服务器端一种存储数据的方式，常常被后端人员简称为session。
+
+
+
+### cookie
+
+>  cookie 是 纯文本格式,不包含任何可执行的代码信息, 伴随着用户请求在 web服务器 和 浏览器之间传递
+
+cookie 本质是属于Http的范畴, 因为Htttp协议本身是 无状态的,服务端是没有办法区别请求来自与哪一个客户端.即使是来自于同一个客户端的多次请求,服务端也是没有能力来区分的. 所以需要cookie去`维护客户端`的状态
+
+#### cookie 的生成方式
+
+- 客户局生成: 
+  - 在JavaScript中通过 document.cookie 属性 可以创建, 维护 和 删除cookie
+  - 设置 document.cookie 属性的值并不会删除存储在页面的所有cookie,它只是简单的创建或修改字符串中指定的 cookie
+  - 要使用JavaScript 提取cookie 的值, 只需要从 document.cookie 中读取即可
+- 服务端生成
+  - web 服务器通过发送一个 名为 Set-Cookie 的Http 消息头来创建一个 cookie
+- Httponly 为避免xss  跨越脚本攻击, 通过JavaScript 的 Document.cookie API 无法访问有 Httponly  标记的 cookie
+
+#### cookie 的缺点  
+
+- 安全性: 由于 cookie 在 Http 中是明文传递的, 其中包含的数据都可以被他人访问, 可能会被篡改 盗用
+- 大小限制: 4k左右, 不是大量存储的理想选择
+- 增加流量: cookie 每次请求都会被自动添加到 Request Header 中, 无形中增加了流量
+
+
+
+
+
+### Web Storage
+
+> SessionStorage和LocalStorage都是浏览器本地存储，统称为Web Storage，存储内容大小一般支持5-10MB
+> 浏览器端通过 Window.sessionStorage 和 Window.localStorage 属性来实现本地存储机制。
+
+	相关API：
+	1. xxxxxStorage.setItem('key', 'value');
+			该方法接受一个键名和值作为参数，将会把键值对添加到存储中，如果键名存在，则更新其对应的值。
+			
+	2. var data = xxxxxStorage.getItem('person');
+		该方法接受一个键名作为参数，返回键名对应的值。
+	
+	3. xxxxxStorage.removeItem('key');
+		该方法接受一个键名作为参数，并把该键名从存储中删除。
+		
+	4. xxxxxStorage.clear()
+		调用该方法会清空存储中的所有键名
+	
+	备注：SessionStorage存储的内容会随着浏览器窗口关闭而消失。
+	      LocalStorage存储的内容，需要手动清除才会消失。
+	
+	storage事件：	
+		1. Storage对象发生变化时触发（即创建/更新/删除数据项时，Storage.clear() 只会触发一次）
+		2. 在同一个页面内发生的改变不会起作用
+		3. 在相同域名下的其他页面发生的改变才会起作用。(修改的页面不会触发事件，与它共享的页面会触发事件)
+			key 	    :  修改或删除的key值，如果调用clear(),为null
+			newValue    :  新设置的值，如果调用clear(),为null
+			oldValue    :  调用改变前的value值,如果调用clear(),为null
+			url         :  触发该脚本变化的文档的url
+			storageArea :  当前的storage对象
+	使用方法：
+	        window.addEventListener('storage',function (event) {
+	            //此处写具体业务逻辑
+	          })
+
+### 浏览器储存量的支持
+​	http://dev-test.nemikor.com/web-storage/support-test/
+
+
+
+## 缓存
+
+## 1. 缓存理解
+
+    1. 缓存定义:
+           1. 浏览器在本地磁盘上将用户之前请求的数据存储起来，当访问者再次需要改数据的时候无需再次发送请求，直接从浏览器本地获取数据
+    2. 缓存的好处:
+           1. 减少请求的个数
+           2. 节省带宽，避免浪费不必要的网络资源
+           3. 减轻服务器压力
+           4. 提高浏览器网页的加载速度，提高用户体验
+
+## 2. 缓存分类
+
+    1. 强缓存
+           1. 不会向服务器发送请求，直接从本地缓存中获取数据
+           2. 请求资源的的状态码为: 200 ok(from memory cache)
+    2. 协商缓存
+           1. 向服务器发送请求，服务器会根据请求头的资源判断是否命中协商缓存
+           2. 如果命中，则返回304状态码通知浏览器从缓存中读取资源
+    3. 强缓存 & 协商缓存的共同点
+           1. 都是从浏览器端读取资源
+    4. 强缓存 VS 协商缓存的不同点
+       1. 强缓存不发请求给服务器
+       2. 协商缓存发请求给服务器，根据服务器返回的信息决定是否使用缓存
+
+## 3. 缓存使用示意图
+
+![](https://s2.ax1x.com/2019/06/17/V7f829.png)
+
+## 4. 缓存中的header参数
+
+### 1、强缓存的header参数
+
+----------
+
+    1. expires：
+           1. 这是http1.0时的规范；它的值为一个绝对时间的`GMT格式`的时间字符串，如```Mon, 10 Jun 2015 21:31:12 GMT```，如果发送请求的时间在expires之前，那么本地缓存始终有效，否则就会发送请求到服务器来获取资源
+    2. cache-control：max-age=number
+           1. 这是http1.1时出现的header信息，主要是利用该字段的max-age值来进行判断，它是一个相对值；资源第一次的请求时间和Cache-Control设定的有效期，计算出一个资源过期时间，再拿这个过期时间跟当前的请求时间比较，如果请求时间在过期时间之前，就能命中缓存，否则就不行；
+                  2. cache-control常用的值（做一个简单了解即可）：
+         2. no-cache: 不使用本地缓存，需要使用协商缓存。先与服务器确认返回的响应是否被更改，如果之前的响应中存在Etag，那么请求的额时候会与服务器端进行验证，如果资源为被更改则使用缓存。
+         3. no-store: 直接禁止游览器缓存数据，每次用户请求该资源，都会向服务器发送一个请求，每次都会下载完整的资源。
+         4. public：可以被所有的用户缓存，包括终端用户和CDN等中间代理服务器。
+         5. private：只能被终端用户的浏览器缓存，不允许CDN等中继缓存服务器对其缓存。
+            2. <font color=red>注意：当cache-control与Expires共存的时候cache-control的优先级高</font>
+
+### 2、协商缓存的header参数
+
+----------
+
+  <font color=red> 重点：协商缓存都是由服务器来确定缓存资源是否可用的，所以客户端与服务器端要通过某种标识来进行通信，从而让服务器判断请求资源是否可以缓存访问</font>
+
+  * Last-Modified/If-Modified-Since:二者的值都是GMT格式的时间字符串
+
+      1.  浏览器第一次跟服务器请求一个资源，服务器在返回这个资源的同时，在respone的header加上Last-Modified的header，这个header表示这个资源在服务器上的最后修改时间
+      2.  浏览器再次跟服务器请求这个资源时，在request的header上加上If-Modified-Since的header，这个header的值就是上一次请求时返回的Last-Modified的值
+      3.  服务器再次收到资源请求时，根据浏览器传过来If-Modified-Since和资源在服务器上的最后修改时间判断资源是否有变化，如果没有变化则返回304 Not Modified，但是不会返回资源内容；如果有变化，就正常返回资源内容。当服务器返回304 Not Modified的响应时，response header中不会再添加Last-Modified的header，因为既然资源没有变化，那么Last-Modified也就不会改变，这是服务器返回304时的response header
+      4.  浏览器收到304的响应后，就会从缓存中加载资源
+      5.  如果协商缓存没有命中，浏览器直接从服务器加载资源时，Last-Modified的Header在重新加载的时候会被更新，下次请求时，If-Modified-Since会启用上次返回的Last-Modified值
+      6.  图例：![](https://i.imgur.com/GZqqDbS.png)
+
+-----------
+
+   * Etag/If-None-Match
+     1. 这两个值是由服务器生成的每个资源的唯一标识字符串，只要资源有变化就这个值就会改变
+     2. 其判断过程与Last-Modified/If-Modified-Since类似
+
+-----------
+
+  * 既生Last-Modified何生Etag
+    1. HTTP1.1中Etag的出现主要是为了解决几个Last-Modified比较难解决的问题
+    2. 一些文件也许会周期性的更改，但是他的内容并不改变(仅仅改变的修改时间)，这个时候我们并不希望客户端认为这个文件被修改了，而重新GET
+    3. 某些文件修改非常频繁，比如在秒以下的时间内进行修改，(比方说1s内修改了N次)，If-Modified-Since能检查到的粒度是s级的，这种修改无法判断(或者说UNIX记录MTIME只能精确到秒)；
+    4. 某些服务器不能精确的得到文件的最后修改时间。
+
+-----------
+
+  * 小结：
+    * 利用Etag能够更加准确的控制缓存，因为Etag是服务器自动生成或者由开发者生成的对应资源在服务器端的唯一标识符。
+
+    * Last-Modified与ETag是可以一起使用的，服务器会优先验证ETag，一致的情况下，才会继续比对Last-Modified，最后才决定是否返回304。

@@ -247,11 +247,11 @@ align-items:center;      //子元素垂直居中
 
 - 为了中间的 `div `不被遮挡 将中间 div 设置 `padding-left` 和` padding-right`后, 
 
-- 将左右的两个div 设置 `relative`,并分别配合 right  和 left 属性.
+- 左边设置-margin 100% .再将左右的两个div 设置 `relative`, 并分别配合 right  和 left 属性.
 
 [圣杯布局]:https://lhammer.cn/You-need-to-know-css/#/zh-cn/holy-grail-layout?v=1
 
-双飞翼布局: 直接在中间(center )的div 内部创建自div 来防止内容, 并在该自div 中 用 Amargin-left 和 margin-right 为左右两栏留出位置.
+双飞翼布局: 直接在中间(center )的div 内部创建自div 来防止内容, 并在该自div 中 用  margin-left 和 margin-right 为左右两栏留出位置.
 
 [双飞翼布局]:https://lhammer.cn/You-need-to-know-css/#/zh-cn/double-wing-layout?v=1
 
