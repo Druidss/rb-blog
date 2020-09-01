@@ -1,4 +1,5 @@
 ---
+
 id: algorithm
 title: algorithm
 author: Adrian Yang
@@ -190,3 +191,105 @@ function bubble(arr) {
 基数排序
 
 ## 数组去重
+
+unserscore 库 中的  _.uniq()
+
+直接使用set
+
+```js
+var result = [...  new Set(arr)]
+```
+
+
+之前没有的元素 push 进新数组
+```JS
+var arr = [1,1,2,3]
+function unique(arr) function unique(arr) {
+    if (!Array.isArray(arr)) {
+        console.log('type error!')
+        return
+    }
+    var array =[];
+    for(var i = 0; i < arr.length; i++) {
+            if( !array.includes( arr[i]) ) {//includes 检测数组是否有某个值
+                    array.push(arr[i]);
+              }
+    }
+        return array
+    or
+    
+    arr.foreach(item=>{
+        if(result.indexOf(item) === -1) return array.push(item)
+    })
+
+}
+```
+
+使用filter
+
+```js
+function unique(arr) {
+  return arr.filter(function(item, index, arr) {
+//indexOf()方法返回在数组中可以找到一个给定元素的第一个索引，如果不存在，则返回-1。
+    //当前元素，在原始数组中的第一个索引==当前索引值，否则返回当前元素
+    return arr.indexOf(item, 0) === index;
+  });
+
+```
+
+使用 reduce 
+
+```js
+function unique(arr) {
+	var result = arr.reduce((pre,item)=>{
+        return pre.includes(item) ? pre : [...pre,item]
+    })
+  });
+
+```
+
+利用属性的唯一值
+
+```js
+function getUniqueArray(){
+	var result = {}
+
+	arr.foreach((item,index)=>{
+		result[arr[index]] = 'sss';
+	})
+
+	result = Objects.keys(result).map(item => ~~item) //字符串转换成数字
+	console.log(result);
+}
+```
+
+使用双重循环
+
+```js
+function unique(arr){            
+        for(var i=0; i<arr.length; i++){
+            for(var j=i+1; j<arr.length; j++){
+                if(arr[i]==arr[j]){   
+                    arr.splice(j,1);
+                    j--;
+                }
+            }
+        }
+return arr;
+}
+```
+
+sort 进行排序  比较相邻两个数的数值
+
+```js
+function getUniqueArray(){
+	var result = []
+	var temp = arr.sort();
+	for (var i = 0 ; i < temp.length; i--) {
+		if(temp[i] !=== temp[i+1]){
+			result.push(arr[i])
+		}
+	}
+}
+```
+
