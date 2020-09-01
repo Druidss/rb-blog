@@ -307,21 +307,22 @@ flex 布局
 - 主轴 main axis
 - 交叉轴 cross axis
 
-容器属性
+**容器属性**
 
-- flex-direction： row / column  决定主轴方向
-- flex-wrap: wrap / nowrap  是否换行
+- flex-direction： row | column  决定主轴方向
+- flex-wrap: wrap |nowrap  是否换行
 - flex-flow  前两者的合并形式
-- justify-content  主轴上的对齐方式
+- justify-content:  flex-start | center  主轴上的对齐方式
 - align-items    交叉轴上的对齐方式
 
-项目属性
+**项目属性/**
 
-- order
-- flex-grow：放大倍数 缺省 0 0 代表不扩展  非零为·`比例扩展`  父容器存在剩余空间时候生效
+- order  该属性定义项目的排列顺序 数值越小，排列越靠前。缺省值为0
+- flex-grow：放大倍数 缺省 0代表不扩展  非零为·`比例扩展`  父容器存在剩余空间时候生效，分配掉剩余空间
 - flex-shrink：缩小倍数 缺省 1   0 代表不压缩  非零代表 `比例压缩`  父容器超出总空间之后生效
 - flex-basis： 占用宽度  缺省auto   auto 默认大小   分配剩余空间之前的预处理
 - flex： flex-grow   felx-shrink  flex-basis
+- align-self： 允许单个项目 与 其他项目有不一样的对齐方式  可覆盖align-items 属性
 
 
 
@@ -333,13 +334,22 @@ Grid  容器/网格线/单元/区域/轨道
 
 容器属性:
 
-- Grid-template-rows
-- Grid-template-columns： 100px 200px 300px
-- Grid-template-ares
+- grid-template-rows：repeat(3,100)  repeat(autofill,1fr)  fraction[片段]
+- grid-template-columns： 100px 200px 300px
+- gap：  （row-gap）
+- grid-template-ares：定义区域 
+- grid-auto-flow： row dense
+- justify-items: center  水平方向
+- align-items:   垂直方向
+- justify-content： 所有的内容 的对齐方式
+- align-content： 
+- grid-auto-columns/ rows  用来设置多出来的项目的 宽 和 高
 
-区域属性
+项目属性
 
-- Grid-area
+- grid-column-start grid-column-end   根据网格线， 指定item的具体位置  
+- grid-column:  2 / 4   或者 span 2 进行跨行
+- grid-area：  区域的名字 
 
 **Flex 与 Grid 布局的对比**
 

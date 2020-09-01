@@ -338,9 +338,16 @@ nodeA.parentNode.removeChild(nodeA);
   getElementById()    //通过元素Id，唯一性
    
   querySelectorAll('p')  // CSS 选择器
+
+property 直接对变量属性进行修改  不会体现在HTML 结构中
+p1.style.width = '100px'
+
+attribute  修改html 属性,会改变html 结构  
+p1.setAttritube('data-name', 'adrian')
+两者都可能引起DOM 渲染
 ```
 
-#attribute  #property
+#attribute  #property 
 
 
 
@@ -402,6 +409,8 @@ class jQuery {
 缺点: 函数中的所有变量都保存在内存中,内存消耗大,不能滥用闭包
 
 解决方法: 在退出函数之前,将使用的局部变量全部删除 element = null;
+
+
 
 #### **作用域的本质是什么？闭包和作用域的关系是什么？**
 
@@ -486,6 +495,8 @@ fn(); //100
 ```
 
 闭包在实际开发中的场景,举例说明?
+
+
 
 
 
@@ -1239,7 +1250,7 @@ JSON.stringify(obj)==JSON.stringify(obj2);
 
 
 
-setTimeout(fun,0)的使用场景
+#### setTimeout(fun,0)的使用场景
 
 ! 调整事件的发生顺序
 

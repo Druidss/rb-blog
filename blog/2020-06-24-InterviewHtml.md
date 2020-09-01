@@ -488,48 +488,6 @@ never 类型是什么?
 
 
 
-# 算法 
-
-#### **两数之和**
-
-```js
-var nums = [2, 7, 11, 15];
-var target = 26;
-var twoSum = function (nums, target) {
-    var box = new Map();
-    for (var i =0; i < nums.length; i++){
-        if(box[target - nums[i]] >= 0){
-            return [box[target - nums[i]], i]
-        }
-        box[nums[i]] = i;
-    }
-}
-```
-
-#### **递归**
-
-一个细胞 一个小时分裂一次 生命周期是三个小时 求 n小时后容器内 有多少个细胞？
-
-```js
-// 黄色细胞由绿色细胞决定   绿色细胞由白色细胞决定
-// 最新的白色细胞 可能由 白色 绿色 黄色来决定.
-function total(n){
-	var yellow = function(n){
-		if(n === 0 || n === 1){return 0};
-		return green(n - 1);
-	}
-	var green = function(n){
-		if(n === 0){return 0};
-		return white(n - 1);
-	}	
-	var white = function(n){
-		if(n === 0){return 1};
-		return white(n - 1) + green(n - 1) + yellow(n - 1);
-	}	
-	return yellow(n) + green(n) + white(n);
-}
-```
-
 
 
 # 开放性问题
