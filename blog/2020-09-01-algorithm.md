@@ -116,6 +116,7 @@ function bubble(arr) {
 	}
 	return arr;
 }
+// O(n^2)
 ```
 
 
@@ -148,7 +149,7 @@ function bubble(arr) {
 	}
 	return handle;
 }
-
+// O(n^2)
 ```
 
 
@@ -177,27 +178,30 @@ function quick(arr){
 	// 3. 递归的方式让左右两边的数组持续这样处理， 一直到左右两边都排好序为止。 最后进行 左边 + 中间 +右边  拼接成最后结果
 	return quick(arrLeft).concat(middleValue,quick(arrRight))
 }
+//O(nlogn)
 ```
 
 
 
 选择排序
 
-
+O(n²)
 
 归并排序
 
-
+O(nlogn)
 
 希尔排序
 
-
+O(nlogn)
 
 堆排序
 
-
+ O(nlogn)
 
 计数排序
+
+ O(n+k)
 
 
 
@@ -206,6 +210,8 @@ function quick(arr){
 
 
 基数排序
+
+ O(N*M) 
 
 ## 数组去重
 
@@ -307,6 +313,23 @@ function getUniqueArray(){
 			result.push(arr[i])
 		}
 	}
+}
+```
+
+随机交换数组内的元素（洗牌法）
+
+```js
+function randomsort(arr){
+    var temp,
+        leng = arr.length,
+        tempindex;
+    for(var i = 0; i < leng; i++){
+        tempindex = Math.floor(Math.random()*(leng - i) + i);
+        temp = arr[i];
+        arr[i] = arr[tempindex];
+        arr[tempindex] = temp;
+    }
+    return arr;
 }
 ```
 

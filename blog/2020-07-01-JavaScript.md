@@ -917,7 +917,6 @@ Promise 通过可信任的语义把回调参数作为参数传递, 将回调的�
  var result = await returnPromise()
    // result === 'fuck'
 
-
    例子二
    document.gerElementById("btn").onclik= async ()=>{
       let res = await axios();
@@ -1145,8 +1144,10 @@ fill接收三个参数，固定值，起始索引，终止索引。
 #### **箭头函数?**
 
 - 没有this  箭头函数的外层函数就是  箭头函数的this绑定
-- 没有自己的 arguments 对象 
-- 不通过new 关键字调用  没有new target 和 原型
+- 没有自己的 arguments 对象  在箭头函数中访问`arguments`实际上获得的是外层局部（函数）执行环境中的值。
+- 不通过new 关键字调用  没有new target 和 原型 prototype
+
+
 
 #### Js 取消事件?
 
