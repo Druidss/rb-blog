@@ -243,21 +243,33 @@ XHTML 使用xml 的语法来 规范的HTMLI
 
 ## 两星题目
 
-**img 的 title 和 alt 属性?**
+#### **img 的 title 和 alt 属性?**
 
 title 是全局属性   鼠标滑倒元素上的时候进行展示
 
 alt   用于照片无法加载的时候显示
 
-**meta标签? 是做什么用的?**
 
-控制页面在移动端不要缩小显示
+
+#### **meta标签? 是做什么用的?**
+
+为搜索引起提供网页的信息, 控制页面在移动端不要缩小显示
+
+- name 属性
+- content 属性
+- http-equiv 属性
 
 ```html
 <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+<meta http-equiv="Set-Cookie" Content="cookievalue=xxx; expires=Wednesday,　21-Oct-98 16:14:21 GMT; path=/">
 ```
 
+- width  属性控制视口的宽度。可以像`width=600`这样设为确切的像素数, 者设为`device-width` 特殊值
 
+- `user-scalable`属性控制允许用户以怎样的方式放大或缩小页面。 但  使用 `user-scalable=no` 会导致可访问性问题，让有视觉障碍（如视力差）的用户使用困难。
+
+  
 
 ####  **Src 与 href**
 
@@ -384,84 +396,6 @@ model
  view 页面层 渲染数据
 
  controller 接受页面层的数据 调用模型层进行业务逻辑的处理
-
-**MVVM** 
-
-- model   数据模型
-- view  页面
-- viewmodel 作为桥梁沟通view 和 Model 
-
-在JQery 时期, 如果需要刷新UI 那么要先取得DOM 再更新UI,这样 数据 和 业务逻辑就和 页面存在强耦合
-
-在MVVM 中 UI 通过数据驱动, 数据一旦改变就会相应的刷新UI. UI 如果改变就会改变其中的数据, 这种方式就可以在业务处理中只关系数据的流转,而无需与页面直接打交道. (ViewModel只关心数据和业务的处理, 不关心View 如何处理数据),这样的情况下, view 和 model都可以独立出来, 任何一方改变了也不一定需要改变另一方,并且可以将一些可复用的逻辑放在一个ViewModel 中,让多个View 复用之歌ViewModel
-
-在MVVM 最核心的就是`数据双向绑定`  ? 还是数据相应? (Angluar 脏数据检测 Vue 数据劫持)
-
-**MVVM 与MVC  的区别**
-
-MVVM 通过数据显示视图而不是节点操作
-
-MVVM 解决了MVC 中大量DOM 操作的问题
-
-
-
-#### **Hooks 如何在函数内实现dataState ?**
-
-const  [state,setState] = useState();
-
-useState   : 一个结构赋值   state  setState(1) 为什么没有更新:   还会显示呢?   组件重新运行了
-
-useEffect : 模拟类组件的声明周期 
-
-
-
-#### **路由原理**
-
-本质就是监听URL 的变化,然后匹配路由规则, 然后显示相应的页面, 并且无需刷新
-
-目前单页面路由两种实现方式
-
-- Hash 模式  `www.test.com/##/`  当## 哈希值变化的时候 用过hashchange监听URL变化,不想服务端请求数据, 从而跳转页面
-- history 模式  HTML5 推出
-
-**受控组件 vs  非受控组件?**
-
-
-
-**React 有哪些声明周期函数? 分别有什么用? (Ajax 请求放在那个阶段?)**
-
-
-
-
-
-**React 如何实现组件之间的通信?**
-
-通过props 传递
-
-1. 一般数据: -> 父组件向子组件
-2. 函数数据: 自组件向父组件传递
-3. 只能一层一层传递, 兄弟组件必须借助父组件
-
-使用消息订阅 发布机制
-
-1. pubsub-js实现
-2. 组件A 发布消息 相当于触发事件
-3. 组件B 订阅消息 接收消息  处理消息 (相当于绑定事件监听)
-4. 优点: 对于组件关系没有限制
-
-
-
-**shouldComponentUpdate 有什么用?**
-
-**虚拟DOM 是什么?**
-
-**React diff 的原理是什么?**
-
-**Redux 是什么?**
-
-reducer action store 
-
-**connect 的原理是什么?**
 
 
 

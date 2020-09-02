@@ -315,7 +315,7 @@ flex 布局
 - justify-content:  flex-start | center  主轴上的对齐方式
 - align-items    交叉轴上的对齐方式
 
-**项目属性/**
+**项目属性**
 
 - order  该属性定义项目的排列顺序 数值越小，排列越靠前。缺省值为0
 - flex-grow：放大倍数 缺省 0代表不扩展  非零为·`比例扩展`  父容器存在剩余空间时候生效，分配掉剩余空间
@@ -324,7 +324,15 @@ flex 布局
 - flex： flex-grow   felx-shrink  flex-basis
 - align-self： 允许单个项目 与 其他项目有不一样的对齐方式  可覆盖align-items 属性
 
+#### Flex 布局的应用场景
 
+- 元素 水平垂直 居中 justify-content(主轴) align-items(垂轴)
+- 顶部导航栏
+- 两栏布局 侧面栏固定宽度  0 0 200px; 
+- 搜索框
+- 圣杯布局  使用order = -1 移动左边栏 @media(max-width:768px) 设置媒体查询
+- 固定低栏
+- 选项卡
 
 
 
@@ -480,7 +488,7 @@ float的值不为none（默认）
 #### **常用css 选择器？**
 
 - 基础选择器  *  p   .info   #infoE
-- 组合选择器  E,F  多元素  E F 所有后代   E>F 子元素 直接后代  E+F 
+- 组合选择器  E,F  多元素  E F 所有后代   (E>F 子元素 直接后代)    E+F 相邻同辈 E ~F  一般同辈
 - 属性选择器   a[href]
 - 伪类 伪元素
 
@@ -501,7 +509,6 @@ float的值不为none（默认）
 首先，需要把元素的宽度、高度设为0。然后设置边框样式。(利用边框均分原理)
 
 ```css
-width : 0 ;
 height : 0 ;
 border -top : 40px solid transparent;
 border -left : 40px solid transparent;

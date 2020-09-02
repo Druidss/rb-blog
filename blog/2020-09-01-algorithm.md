@@ -1,5 +1,4 @@
 ---
-
 id: algorithm
 title: algorithm
 author: Adrian Yang
@@ -156,10 +155,28 @@ function bubble(arr) {
 
 #### 快速排序 quick
 
-```
+```js
 找到中间项, 将它从运来的数组中移除, 同时获得这一项的结果
 让每一项 与 中间项比较, 比它小的放在左边 大的放在右边
+function quick(arr){
+	//结束递归  当 arr 小于等于 一项，则不用处理
+	if(ary.length <= 1){
+		return arr;
+	}
+	// 1. 找到数组的中间项，在原有的数组中把它移除
+	let middleIndex = Math.floor(arr.length/2);
+	let middleValue = arr.splice(middleIndex,1)[0];
 
+	// 2. 准备左右两个数组，循环剩下数组中的每一项，比当前小的放在左边数组中，反之放到右边的数组中
+	let arrLeft = [];
+			arrRight = [];
+	for(let i=0; i < arr.length; i++){
+		let item = arr[i];
+		item < middleValue ? arrLeft.push(item) : arrRight.push(item);
+	}
+	// 3. 递归的方式让左右两边的数组持续这样处理， 一直到左右两边都排好序为止。 最后进行 左边 + 中间 +右边  拼接成最后结果
+	return quick(arrLeft).concat(middleValue,quick(arrRight))
+}
 ```
 
 
