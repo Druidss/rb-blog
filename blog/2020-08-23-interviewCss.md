@@ -26,13 +26,13 @@ tags: [interviewCss, interview , FrontEnd]
 
 **absolute**
 
-绝对定位, 脱离文档流,此时的偏移属性参照里自己最近定位的祖先元素.(要求父元素必须定位 非 static)
+绝对定位, 脱离文档流(完全脱离“Normal flow”),此时的偏移属性参照里自己最近定位的祖先元素.(要求父元素必须定位 非 static)
 
 其 margin 不与 任何其他的margin 进行折叠.
 
 **fixed**
 
-与 absolute 一致.  但偏移定位以窗口为参考.当出现滚动条时,对象不会随着滚动
+与 absolute 一致(完全脱离“Normal flow”).  但偏移定位以窗口为参考.当出现滚动条时,对象不会随着滚动
 
 **sticky**
 
@@ -45,8 +45,6 @@ tags: [interviewCss, interview , FrontEnd]
 
 
 #### **隐藏元素的方法和区别**
-
-
 
 
 
@@ -219,6 +217,27 @@ align-items:center;      //子元素垂直居中
 }
 ```
 
+使用 transform 来实现
+
+```css
+        #container{
+         position: relative;
+            height: 200px;
+            background: #333;
+        }
+        #center-div{
+            position: absolute;
+            top:50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+
+首先相对父元素top，left定位在50%的位置，这时候只是图片左上角居中，而中心点还没居中，
+加上margin: -100px 0 0 -100px;利用负边距把图片的中心点位于父元素的中心点，从而实现垂直水平居中
+```
+
+
+
 
 
 - JavaScript 实现  (getBoundingClientRect)
@@ -324,6 +343,14 @@ flex 布局
 - flex： flex-grow   felx-shrink  flex-basis
 - align-self： 允许单个项目 与 其他项目有不一样的对齐方式  可覆盖align-items 属性
 
+```css
+flex: 1  // flex: 1(若空间剩余,则均分剩余空间) 1(若空间不足,该项目缩小) 可以平分元素
+flex: 
+margin-right: auto 0 //自动靠右居中
+```
+
+
+
 #### Flex 布局的应用场景
 
 - 元素 水平垂直 居中 justify-content(主轴) align-items(垂轴)
@@ -368,6 +395,15 @@ Grid布局则是将容器划分为 行 和 列,产生单元格,然后指定项�
 
 
 
+
+#### 文档流 和 文本流
+
+文档流是相对于盒子模型讲的
+文本流是相对于文子段落讲的
+元素浮动之后，会让它跳出文档流，也就是说当它后面还有元素时，其他元素会无视它所占据了的区域，直接在它身下布局。
+
+但是文字却会认同浮动元素所占据的区域，围绕它布局，也就是没有拖出文本流。
+但是绝对定位后，不仅元素盒子会拖出文档流，文字也会出文本流。那么后面元素的文本就不会在认同它的区域位置，会直接在它后面布局，不会在环绕。
 
 
 
@@ -444,8 +480,6 @@ overflow的值不为visible（默认）
 or
 float的值不为none（默认）
 ```
-
-
 
 - 特性以及作用?
 
@@ -601,6 +635,16 @@ Chrome 中文界面下默认会将小于 12px 的文本强制按照 12px 显示
 ```
 
 
+
+#### rem 的用法
+
+rem：相对于根元素html的font-size 即 根据网页的根元素来设置字体大小
+
+移动端的适配方法
+
+-  简单一点的页面，一般高度直接设置成固定值，宽度一般撑满整个屏幕。
+- 稍复杂一些的是利用百分比设置元素的大小来进行适配，或者利用 flex 等 css 去设置一些需要定制的宽度。
+- 再复杂一些的响应式页面，需要利用 css3 的 media query 属性来进行适配，大致思路是根据屏幕不同大小，来设置对应的 css 样式。
 
 
 
